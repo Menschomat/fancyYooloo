@@ -9,7 +9,11 @@ import java.util.ArrayList;
 
 public class YoolooKartenspiel {
 
-	public enum Kartenfarbe {
+    public boolean hasPlayer(String playerName) {
+        return spielerliste.stream().map(YoolooSpieler::getName).anyMatch(s -> s.equals(playerName));
+    }
+
+    public enum Kartenfarbe {
         Gelb, Rot, Gruen, Blau, Orange, Pink, Violett, Tuerkis
     }
 

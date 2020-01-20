@@ -5,6 +5,7 @@
 package server;
 
 import common.YoolooKartenspiel;
+import persistance.YoolooUsers;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,6 +25,7 @@ public class YoolooServer {
     private int port = 44137;
     private int spielerProRunde = 8; // min 1, max Anzahl definierte Farben in Enum YoolooKartenSpiel.KartenFarbe)
     private GameMode serverGameMode = GameMode.GAMEMODE_SINGLE_GAME;
+    private YoolooUsers users = new YoolooUsers();
 
     public GameMode getServerGameMode() {
         return serverGameMode;
@@ -126,6 +128,10 @@ public class YoolooServer {
             e1.printStackTrace();
         }
 
+    }
+
+    public YoolooUsers getUsers() {
+        return users;
     }
 
     public int getClientCount() {

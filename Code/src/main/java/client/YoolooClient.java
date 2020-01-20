@@ -16,8 +16,8 @@ import common.LoginMessage;
 import common.YoolooKartenspiel;
 import common.YoolooSpieler;
 import common.YoolooStich;
-import main.java.messages.ClientMessage;
-import main.java.messages.ClientMessage.ClientMessageType;
+import messages.ClientMessage;
+import messages.ClientMessage.ClientMessageType;
 import messages.ServerMessage;
 
 

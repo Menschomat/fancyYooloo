@@ -3,7 +3,7 @@
 //  V0.106  |200107| cic |    -   | add history of change
 
 
-package main.java.messages;
+package messages;
 
 import java.io.Serializable;
 
