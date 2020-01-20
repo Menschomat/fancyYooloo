@@ -14,6 +14,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import client.YoolooClient.ClientState;
 import common.LoginMessage;
@@ -29,6 +30,8 @@ import persistance.YoolooFileWriter;
 import persistance.YoolooUsers;
 
 public class YoolooClientHandler extends Thread {
+
+	Logger logger = Logger.getLogger(getClass().getName());
 
 	private final static int delay = 100;
 
@@ -91,15 +94,20 @@ public class YoolooClientHandler extends Thread {
 					// Neuer YoolooSpieler in Runde registrieren
 					if (antwortObject instanceof LoginMessage) {
 						LoginMessage newLogin = (LoginMessage) antwortObject;
-						// TODO GameMode des Logins wird noch nicht ausgewertet
-						meinSpieler = new YoolooSpieler(newLogin.getSpielerName(), YoolooKartenspiel.maxKartenWert);
-						meinSpieler.setClientHandlerId(clientHandlerId);
-						registriereSpielerInSession(meinSpieler);
-						oos.writeObject(meinSpieler);
-						sendeKommando(ServerMessageType.SERVERMESSAGE_SORT_CARD_SET, ClientState.CLIENTSTATE_SORT_CARDS,
-								null);
-						this.state = ServerState.ServerState_PLAY_SESSION;
-						break;
+						if (playerAlreadyInSession(newLogin.getSpielerName())) {
+							logger.info("run| Player already part of session, disconnecting");
+							this.state = ServerState.ServerState_DISCONNECT;
+							break;
+						} else {
+							meinSpieler = new YoolooSpieler(newLogin.getSpielerName(), YoolooKartenspiel.maxKartenWert);
+							meinSpieler.setClientHandlerId(clientHandlerId);
+							registriereSpielerInSession(meinSpieler);
+							oos.writeObject(meinSpieler);
+							sendeKommando(ServerMessageType.SERVERMESSAGE_SORT_CARD_SET, ClientState.CLIENTSTATE_SORT_CARDS,
+									null);
+							this.state = ServerState.ServerState_PLAY_SESSION;
+							break;
+						}
 					}
 				case ServerState_PLAY_SESSION:
 					switch (session.getGamemode()) {
@@ -193,6 +201,10 @@ public class YoolooClientHandler extends Thread {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private boolean playerAlreadyInSession(String playerName) {
+		return session.getAktuellesSpiel().hasPlayer(playerName);
 	}
 
 	private void registriereSpielerInSession(YoolooSpieler meinSpieler) {

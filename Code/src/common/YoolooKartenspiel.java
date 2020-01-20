@@ -91,6 +91,10 @@ public class YoolooKartenspiel {
 		return neuerSpieler;
 	}
 
+	public boolean hasPlayer(String playerName) {
+		return spielerliste.stream().map(YoolooSpieler::getName).anyMatch(s -> s.equals(playerName));
+	}
+
 	@Override
 	public String toString() {
 		return "YoolooKartenspiel [anzahlFarben=" + anzahlFarben + ", anzahlWerte=" + anzahlWerte + ", getSpielname()="
