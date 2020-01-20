@@ -12,6 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.ArrayList;
 
 import client.YoolooClient.ClientState;
 import common.LoginMessage;
@@ -41,11 +42,15 @@ public class YoolooClientHandler extends Thread {
 	private YoolooSpieler meinSpieler = null;
 	private int clientHandlerId;
 
+	private ArrayList<YoolooKarte> gespielteKarten;
+
 	public YoolooClientHandler(YoolooServer yoolooServer, Socket clientSocket) {
 		this.myServer = yoolooServer;
 		myServer.toString();
 		this.clientSocket = clientSocket;
 		this.state = ServerState.ServerState_NULL;
+		this.gespielteKarten = new ArrayList<>();
+
 	}
 
 	/**
@@ -207,6 +212,13 @@ public class YoolooClientHandler extends Thread {
 		YoolooStich aktuellerStich = null;
 		System.out.println("[ClientHandler" + clientHandlerId + "] spiele Stich Nr: " + stichNummer
 				+ " KarteKarte empfangen: " + empfangeneKarte.toString());
+		if (!this.gespielteKarten.contains(empfangeneKarte)) {
+			System.out.println("[ClientHandler" + clientHandlerId + "] Anti-Cheat Prüfung war erfolgreich was okay!");
+		} else {
+			System.out.println("[ClientHandler" + clientHandlerId + "] Anti-Cheat Prüfung hat eine Cheat erkannt!");
+			myServer.shutDownServer(543210);
+		}
+		gespielteKarten.add(empfangeneKarte);
 		session.spieleKarteAus(clientHandlerId, stichNummer, empfangeneKarte);
 		// ausgabeSpielplan(); // Fuer Debuginformationen sinnvoll
 		while (aktuellerStich == null) {
