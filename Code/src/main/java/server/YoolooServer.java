@@ -39,7 +39,7 @@ public class YoolooServer {
     private boolean serverAktiv = true;
 
     // private ArrayList<Thread> spielerThreads;
-    private ArrayList<YoolooClientHandler> clientHandlerList;
+    private ArrayList<YoolooClientHandler> clientHandlerList = new ArrayList<>();
 
     private ExecutorService spielerPool;
 
@@ -81,12 +81,11 @@ public class YoolooServer {
     }
 
     public void startServer() {
-    	printBanner();
+        printBanner();
         try {
             // Init
             serverSocket = new ServerSocket(port);
             spielerPool = Executors.newCachedThreadPool();
-            clientHandlerList = new ArrayList<YoolooClientHandler>();
             System.out.println("Server gestartet - warte auf Spieler");
 
             while (serverAktiv) {
@@ -127,6 +126,10 @@ public class YoolooServer {
             e1.printStackTrace();
         }
 
+    }
+
+    public int getClientCount() {
+        return clientHandlerList.size();
     }
 
     // TODO Dummy zur Serverterminierung noch nicht funktional
