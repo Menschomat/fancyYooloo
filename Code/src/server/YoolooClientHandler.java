@@ -12,6 +12,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 import client.YoolooClient.ClientState;
 import common.LoginMessage;
@@ -23,6 +25,8 @@ import messages.ClientMessage;
 import messages.ServerMessage;
 import messages.ServerMessage.ServerMessageResult;
 import messages.ServerMessage.ServerMessageType;
+import persistance.YoolooFileWriter;
+import persistance.YoolooUsers;
 
 public class YoolooClientHandler extends Thread {
 
@@ -100,12 +104,14 @@ public class YoolooClientHandler extends Thread {
 				case ServerState_PLAY_SESSION:
 					switch (session.getGamemode()) {
 					case GAMEMODE_SINGLE_GAME:
+						List<Integer> cardsPlayed = new ArrayList<>();
 						// Triggersequenz zur Abfrage der einzelnen Karten des Spielers
 						for (int stichNummer = 0; stichNummer < YoolooKartenspiel.maxKartenWert; stichNummer++) {
 							sendeKommando(ServerMessageType.SERVERMESSAGE_SEND_CARD,
 									ClientState.CLIENTSTATE_PLAY_SINGLE_GAME, null, stichNummer);
 							// Neue YoolooKarte in Session ausspielen und Stich abfragen
 							YoolooKarte neueKarte = (YoolooKarte) empfangeVomClient();
+							cardsPlayed.add(neueKarte.getWert());
 							System.out.println("[ClientHandler" + clientHandlerId + "] Karte empfangen:" + neueKarte);
 							YoolooStich currentstich = spieleKarte(stichNummer, neueKarte);
 							// Punkte fuer gespielten Stich ermitteln
@@ -118,6 +124,7 @@ public class YoolooClientHandler extends Thread {
 							oos.writeObject(currentstich);
 						}
 						this.state = ServerState.ServerState_DISCONNECT;
+						myServer.getUsers().setUserCardOrder(meinSpieler.getName(), cardsPlayed);
 						break;
 					default:
 						System.out.println("[ClientHandler" + clientHandlerId + "] GameMode nicht implementiert");
@@ -192,6 +199,7 @@ public class YoolooClientHandler extends Thread {
 		System.out
 				.println("[ClientHandler" + clientHandlerId + "] registriereSpielerInSession " + meinSpieler.getName());
 		session.getAktuellesSpiel().spielerRegistrieren(meinSpieler);
+		meinSpieler.setAktuelleSortierung(myServer.getUsers().getUserCardOrder(meinSpieler));
 	}
 
 	/**

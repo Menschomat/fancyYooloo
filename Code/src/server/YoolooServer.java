@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import common.YoolooKartenspiel;
+import persistance.YoolooUsers;
 
 public class YoolooServer {
 
@@ -19,6 +20,8 @@ public class YoolooServer {
 	private int port = 44137;
 	private int spielerProRunde = 8; // min 1, max Anzahl definierte Farben in Enum YoolooKartenSpiel.KartenFarbe)
 	private GameMode serverGameMode = GameMode.GAMEMODE_SINGLE_GAME;
+
+	private YoolooUsers users = new YoolooUsers();
 
 	public GameMode getServerGameMode() {
 		return serverGameMode;
@@ -103,6 +106,10 @@ public class YoolooServer {
 			e1.printStackTrace();
 		}
 
+	}
+
+	public YoolooUsers getUsers() {
+		return users;
 	}
 
 	// TODO Dummy zur Serverterminierung noch nicht funktional

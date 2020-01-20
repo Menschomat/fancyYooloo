@@ -1,25 +1,29 @@
 package persistance;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class YoolooPersistance implements Serializable {
 
-    public Set<Integer> lastPlayedOrder = new HashSet<>();
 
-    public Set<Integer> getLastPlayedOrder() {
-        return lastPlayedOrder;
+    public Map<String, List<Integer>> users = new HashMap<>();
+
+
+    public Map<String, List<Integer>> getUsers() {
+        return users;
     }
 
-    public void setLastPlayedOrder(Set<Integer> lastPlayedOrder) {
-        this.lastPlayedOrder = lastPlayedOrder;
+    public void setUsers(Map<String, List<Integer>> users) {
+        this.users = users;
     }
 
     @Override
     public String toString() {
         return "YoolooPersistance{" +
-                "lastPlayedOrder=" + lastPlayedOrder +
+                "users=" + users +
                 '}';
     }
 }

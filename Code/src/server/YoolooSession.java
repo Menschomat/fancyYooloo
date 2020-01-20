@@ -7,6 +7,7 @@ package server;
 import common.YoolooKarte;
 import common.YoolooKartenspiel;
 import common.YoolooStich;
+import persistance.YoolooUsers;
 import server.YoolooServer.GameMode;
 
 public class YoolooSession {

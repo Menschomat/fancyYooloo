@@ -6,31 +6,45 @@ import java.util.logging.Logger;
 
 public class YoolooFileWriter {
 
-    private final String filePath = "/user";
+    private final String filePath = "users.data";
 
-    Logger logger = Logger.getLogger("YoolooFileWriter");
+    Logger logger = Logger.getLogger(getClass().getName());
 
-    public void saveUsers(YoolooUsers users) {
-        try(ObjectOutputStream writer = new ObjectOutputStream(new FileOutputStream(new File(filePath)))) {
-            writer.writeObject(users);
-            logger.log(Level.FINE, "saveUsers| Success");
-        } catch(IOException e) {
-            logger.log(Level.SEVERE, "saveUsers| Encountered IOException: " + e.getMessage());
+
+    public YoolooFileWriter() {
+        File usersFile = new File(filePath);
+        if (!usersFile.exists()) {
+            try {
+                usersFile.createNewFile();
+                saveUsers(new YoolooPersistance());
+            } catch (IOException e) {
+                logger.severe("YoolooFileWriter| Encountered IOException: " + e.getMessage());
+            }
         }
     }
 
-    public YoolooUsers loadUsers() {
-        try(ObjectInputStream reader = new ObjectInputStream(new FileInputStream(new File("users")))) {
-            YoolooUsers users = (YoolooUsers) reader.readObject();
-            logger.log(Level.FINE, "loadUsers| Success");
+
+    public void saveUsers(YoolooPersistance users) {
+        try(ObjectOutputStream writer = new ObjectOutputStream(new FileOutputStream(new File(filePath)))) {
+            writer.writeObject(users);
+            logger.fine("saveUsers| Success");
+        } catch(IOException e) {
+            logger.severe("saveUsers| Encountered IOException: " + e.getMessage());
+        }
+    }
+
+    public YoolooPersistance loadUsers() {
+        try(ObjectInputStream reader = new ObjectInputStream(new FileInputStream(new File(filePath)))) {
+            YoolooPersistance users = (YoolooPersistance) reader.readObject();
+            logger.fine("loadUsers| Success");
             return users;
         } catch(IOException e) {
-            logger.log(Level.SEVERE, "loadUsers| Encountered IOException: " + e.getMessage());
+            logger.severe("loadUsers| Encountered IOException: " + e.getMessage());
         } catch(ClassNotFoundException e) {
-            logger.log(Level.SEVERE, "loadUsers| Encountered ClassNotFoundException: " + e.getMessage());
+            logger.severe("loadUsers| Encountered ClassNotFoundException: " + e.getMessage());
         }
-        logger.log(Level.SEVERE, "loadUsers| Returning default empty Users");
-        return new YoolooUsers();
+        logger.info("loadUsers| Returning default empty Users");
+        return new YoolooPersistance();
     }
 
 }
