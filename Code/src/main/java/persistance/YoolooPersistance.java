@@ -9,7 +9,7 @@ import java.util.Map;
 public class YoolooPersistance implements Serializable {
 
 
-    public Map<String, List<Integer>> users = new HashMap<>();
+    private Map<String, List<Integer>> users = new HashMap<>();
 
 
     public Map<String, List<Integer>> getUsers() {
