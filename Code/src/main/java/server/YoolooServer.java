@@ -55,10 +55,12 @@ public class YoolooServer {
         GAMEMODE_PLAY_POKAL_LL // noch nicht genutzt: Spielmodus: KO System mit Lucky Looser
     }
 
-    public YoolooServer(int port, int spielerProRunde, GameMode gameMode) {
+    public YoolooServer(int port, int spielerProRunde, int minRealPlayers, int waitForPlayers, GameMode gameMode) {
         this.port = port;
         this.spielerProRunde = spielerProRunde;
         this.serverGameMode = gameMode;
+        this.minRealPlayers = minRealPlayers;
+        this.waitForPlayers = waitForPlayers;
     }
 
     private void printBanner() {
