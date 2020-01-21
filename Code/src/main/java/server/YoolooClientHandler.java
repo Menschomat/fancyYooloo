@@ -86,200 +86,201 @@ public class YoolooClientHandler extends Thread {
 			state = ServerState.ServerState_REGISTER; // Abfragen der Spieler LoginMessage
 			sendeKommando(ServerMessageType.SERVERMESSAGE_SENDLOGIN, ClientState.CLIENTSTATE_LOGIN, null);
 
-			Object antwortObject = null;
-			while (this.state != ServerState.ServerState_DISCONNECTED) {
-				// Empfange Spieler als Antwort vom Client
-				antwortObject = empfangeVomClient();
-				if (antwortObject instanceof ClientMessage) {
-					ClientMessage message = (ClientMessage) antwortObject;
-					System.out.println("[ClientHandler" + clientHandlerId + "] Nachricht Vom Client: " + message);
-				}
-				switch (state) {
-				case ServerState_REGISTER:
-					// Neuer YoolooSpieler in Runde registrieren
-					if (antwortObject instanceof LoginMessage) {
-						LoginMessage newLogin = (LoginMessage) antwortObject;
-						if (playerAlreadyInSession(newLogin.getSpielerName())) {
-							logger.info("run| Player already part of session, disconnecting");
-							this.state = ServerState.ServerState_DISCONNECT;
-							break;
-						} else {
-							meinSpieler = new YoolooSpieler(newLogin.getSpielerName(), YoolooKartenspiel.maxKartenWert);
-							meinSpieler.setClientHandlerId(clientHandlerId);
-							registriereSpielerInSession(meinSpieler);
-							oos.writeObject(meinSpieler);
-							sendeKommando(ServerMessageType.SERVERMESSAGE_SORT_CARD_SET, ClientState.CLIENTSTATE_SORT_CARDS,
-									null);
-							this.state = ServerState.ServerState_PLAY_SESSION;
-							break;
-						}
-					}
-				case ServerState_PLAY_SESSION:
-					switch (session.getGamemode()) {
-					case GAMEMODE_SINGLE_GAME:
-						List<Integer> cardsPlayed = new ArrayList<>();
-						// Triggersequenz zur Abfrage der einzelnen Karten des Spielers
-						for (int stichNummer = 0; stichNummer < YoolooKartenspiel.maxKartenWert; stichNummer++) {
-							sendeKommando(ServerMessageType.SERVERMESSAGE_SEND_CARD,
-									ClientState.CLIENTSTATE_PLAY_SINGLE_GAME, null, stichNummer);
-							// Neue YoolooKarte in Session ausspielen und Stich abfragen
-							YoolooKarte neueKarte = (YoolooKarte) empfangeVomClient();
-							cardsPlayed.add(neueKarte.getWert());
-							System.out.println("[ClientHandler" + clientHandlerId + "] Karte empfangen:" + neueKarte);
-							YoolooStich currentstich = spieleKarte(stichNummer, neueKarte);
-							// Punkte fuer gespielten Stich ermitteln
-							if (currentstich.getSpielerNummer() == clientHandlerId) {
-								meinSpieler.erhaeltPunkte(stichNummer + 1);
-							}
-							System.out.println("[ClientHandler" + clientHandlerId + "] Stich " + stichNummer
-									+ " wird gesendet: " + currentstich.toString());
-							// Stich an Client uebermitteln
-							oos.writeObject(currentstich);
-						}
-						this.state = ServerState.ServerState_DISCONNECT;
-						myServer.getUsers().setUserCardOrder(meinSpieler.getName(), cardsPlayed);
-						break;
-					default:
-						System.out.println("[ClientHandler" + clientHandlerId + "] GameMode nicht implementiert");
-						this.state = ServerState.ServerState_DISCONNECT;
-						break;
-					}
-				case ServerState_DISCONNECT:
-				// todo cic
-				
-            sendeKommando(ServerMessageType.SERVERMESSAGE_CHANGE_STATE, ClientState.CLIENTSTATE_DISCONNECTED,  null);
+            Object antwortObject = null;
+            while (this.state != ServerState.ServerState_DISCONNECTED) {
+                // Empfange Spieler als Antwort vom Client
+                antwortObject = empfangeVomClient();
+                if (antwortObject instanceof ClientMessage) {
+                    ClientMessage message = (ClientMessage) antwortObject;
+                    System.out.println("[ClientHandler" + clientHandlerId + "] Nachricht Vom Client: " + message);
+                }
+                switch (state) {
+                    case ServerState_REGISTER:
+                        // Neuer YoolooSpieler in Runde registrieren
+                        if (antwortObject instanceof LoginMessage) {
+                            LoginMessage newLogin = (LoginMessage) antwortObject;
+                            if (playerAlreadyInSession(newLogin.getSpielerName())) {
+                                logger.info("run| Player already part of session, disconnecting");
+                                this.state = ServerState.ServerState_DISCONNECT;
+                                break;
+                            } else {
+                                meinSpieler = new YoolooSpieler(newLogin.getSpielerName(), YoolooKartenspiel.maxKartenWert);
+                                meinSpieler.setClientHandlerId(clientHandlerId);
+                                registriereSpielerInSession(meinSpieler);
+                                oos.writeObject(meinSpieler);
+                                sendeKommando(ServerMessageType.SERVERMESSAGE_SORT_CARD_SET, ClientState.CLIENTSTATE_SORT_CARDS,
+                                        null);
+                                this.state = ServerState.ServerState_PLAY_SESSION;
+                                break;
+                            }
+                        }
+                    case ServerState_PLAY_SESSION:
+                        switch (session.getGamemode()) {
+                            case GAMEMODE_SINGLE_GAME:
+                                List<Integer> cardsPlayed = new ArrayList<>();
+                                // Triggersequenz zur Abfrage der einzelnen Karten des Spielers
+                                for (int stichNummer = 0; stichNummer < YoolooKartenspiel.maxKartenWert; stichNummer++) {
+                                    sendeKommando(ServerMessageType.SERVERMESSAGE_SEND_CARD,
+                                            ClientState.CLIENTSTATE_PLAY_SINGLE_GAME, null, stichNummer);
+                                    // Neue YoolooKarte in Session ausspielen und Stich abfragen
+                                    YoolooKarte neueKarte = (YoolooKarte) empfangeVomClient();
+                                    cardsPlayed.add(neueKarte.getWert());
+                                    System.out.println("[ClientHandler" + clientHandlerId + "] Karte empfangen:" + neueKarte);
+                                    YoolooStich currentstich = spieleKarte(stichNummer, neueKarte);
+                                    // Punkte fuer gespielten Stich ermitteln
+                                    if (currentstich.getSpielerNummer() == clientHandlerId) {
+                                        meinSpieler.erhaeltPunkte(stichNummer + 1);
+                                    }
+                                    System.out.println("[ClientHandler" + clientHandlerId + "] Stich " + stichNummer
+                                            + " wird gesendet: " + currentstich.toString());
+                                    // Stich an Client uebermitteln
+                                    oos.writeObject(currentstich);
+                                }
+                                this.state = ServerState.ServerState_DISCONNECT;
+                                myServer.getUsers().setUserCardOrder(meinSpieler.getName(), cardsPlayed);
+                                break;
+                            default:
+                                System.out.println("[ClientHandler" + clientHandlerId + "] GameMode nicht implementiert");
+                                this.state = ServerState.ServerState_DISCONNECT;
+                                break;
+                        }
+                    case ServerState_DISCONNECT:
+                        // todo cic
+
+                        sendeKommando(ServerMessageType.SERVERMESSAGE_CHANGE_STATE, ClientState.CLIENTSTATE_DISCONNECTED, null);
 //					sendeKommando(ServerMessageType.SERVERMESSAGE_RESULT_SET, ClientState.CLIENTSTATE_DISCONNECTED,	null);
-					oos.writeObject(session.getErgebnis());
-					this.state = ServerState.ServerState_DISCONNECTED;
-					break;
-				default:
-					System.out.println("Undefinierter Serverstatus - tue mal nichts!");
-				}
-			}
-		} catch (EOFException e) {
-			System.err.println(e);
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.err.println(e);
-			e.printStackTrace();
-		} finally {
-			System.out.println("[ClientHandler" + clientHandlerId + "] Verbindung zu " + socketAddress + " beendet");
-		}
+                        oos.writeObject(session.getErgebnis());
+                        this.state = ServerState.ServerState_DISCONNECTED;
+						Thread.currentThread().interrupt();
+						return;
+                    default:
+                        System.out.println("Undefinierter Serverstatus - tue mal nichts!");
+                }
+            }
+        } catch (EOFException e) {
+            System.err.println(e);
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println(e);
+            e.printStackTrace();
+        } finally {
+            System.out.println("[ClientHandler" + clientHandlerId + "] Verbindung zu " + socketAddress + " beendet");
+        }
 
-	}
+    }
 
-	private void sendeKommando(ServerMessageType serverMessageType, ClientState clientState,
-			ServerMessageResult serverMessageResult, int paramInt) throws IOException {
-		ServerMessage kommandoMessage = new ServerMessage(serverMessageType, clientState, serverMessageResult,
-				paramInt);
-		System.out.println("[ClientHandler" + clientHandlerId + "] Sende Kommando: " + kommandoMessage.toString());
-		oos.writeObject(kommandoMessage);
-	}
+    private void sendeKommando(ServerMessageType serverMessageType, ClientState clientState,
+                               ServerMessageResult serverMessageResult, int paramInt) throws IOException {
+        ServerMessage kommandoMessage = new ServerMessage(serverMessageType, clientState, serverMessageResult,
+                paramInt);
+        System.out.println("[ClientHandler" + clientHandlerId + "] Sende Kommando: " + kommandoMessage.toString());
+        oos.writeObject(kommandoMessage);
+    }
 
-	private void sendeKommando(ServerMessageType serverMessageType, ClientState clientState,
-			ServerMessageResult serverMessageResult) throws IOException {
-		ServerMessage kommandoMessage = new ServerMessage(serverMessageType, clientState, serverMessageResult);
-		System.out.println("[ClientHandler" + clientHandlerId + "] Sende Kommando: " + kommandoMessage.toString());
-		oos.writeObject(kommandoMessage);
-	}
+    private void sendeKommando(ServerMessageType serverMessageType, ClientState clientState,
+                               ServerMessageResult serverMessageResult) throws IOException {
+        ServerMessage kommandoMessage = new ServerMessage(serverMessageType, clientState, serverMessageResult);
+        System.out.println("[ClientHandler" + clientHandlerId + "] Sende Kommando: " + kommandoMessage.toString());
+        oos.writeObject(kommandoMessage);
+    }
 
-	private void verbindeZumClient() throws IOException {
-		oos = new ObjectOutputStream(clientSocket.getOutputStream());
-		ois = new ObjectInputStream(clientSocket.getInputStream());
-		System.out.println("[ClientHandler  " + clientHandlerId + "] Starte ClientHandler fuer: "
-				+ clientSocket.getInetAddress() + ":->" + clientSocket.getPort());
-		socketAddress = clientSocket.getRemoteSocketAddress();
-		System.out.println("[ClientHandler" + clientHandlerId + "] Verbindung zu " + socketAddress + " hergestellt");
-		oos.flush();
-	}
+    private void verbindeZumClient() throws IOException {
+        oos = new ObjectOutputStream(clientSocket.getOutputStream());
+        ois = new ObjectInputStream(clientSocket.getInputStream());
+        System.out.println("[ClientHandler  " + clientHandlerId + "] Starte ClientHandler fuer: "
+                + clientSocket.getInetAddress() + ":->" + clientSocket.getPort());
+        socketAddress = clientSocket.getRemoteSocketAddress();
+        System.out.println("[ClientHandler" + clientHandlerId + "] Verbindung zu " + socketAddress + " hergestellt");
+        oos.flush();
+    }
 
-	private Object empfangeVomClient() {
-		Object antwortObject;
-		try {
-			antwortObject = ois.readObject();
-			return antwortObject;
-		} catch (EOFException eofe) {
-			eofe.printStackTrace();
-		} catch (ClassNotFoundException cnfe) {
-			cnfe.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+    private Object empfangeVomClient() {
+        Object antwortObject;
+        try {
+            antwortObject = ois.readObject();
+            return antwortObject;
+        } catch (EOFException eofe) {
+            eofe.printStackTrace();
+        } catch (ClassNotFoundException cnfe) {
+            cnfe.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-	private boolean playerAlreadyInSession(String playerName) {
-		return session.getAktuellesSpiel().hasPlayer(playerName);
-	}
+    private boolean playerAlreadyInSession(String playerName) {
+        return session.getAktuellesSpiel().hasPlayer(playerName);
+    }
 
-	private void registriereSpielerInSession(YoolooSpieler meinSpieler) {
-		System.out
-				.println("[ClientHandler" + clientHandlerId + "] registriereSpielerInSession " + meinSpieler.getName());
-		session.getAktuellesSpiel().spielerRegistrieren(meinSpieler);
-		meinSpieler.setAktuelleSortierung(myServer.getUsers().getUserCardOrder(meinSpieler));
-	}
+    private void registriereSpielerInSession(YoolooSpieler meinSpieler) {
+        System.out
+                .println("[ClientHandler" + clientHandlerId + "] registriereSpielerInSession " + meinSpieler.getName());
+        session.getAktuellesSpiel().spielerRegistrieren(meinSpieler);
+        meinSpieler.setAktuelleSortierung(myServer.getUsers().getUserCardOrder(meinSpieler));
+    }
 
-	/**
-	 * Methode spielt eine Karte des Client in der Session aus und wartet auf die
-	 * Karten aller anderen Mitspieler. Dann wird das Ergebnis in Form eines Stichs
-	 * an den Client zurueck zu geben
-	 * 
-	 * @param stichNummer
-	 * @param empfangeneKarte
-	 * @return
-	 */
-	private YoolooStich spieleKarte(int stichNummer, YoolooKarte empfangeneKarte) {
-		YoolooStich aktuellerStich = null;
-		System.out.println("[ClientHandler" + clientHandlerId + "] spiele Stich Nr: " + stichNummer
-				+ " KarteKarte empfangen: " + empfangeneKarte.toString());
-		if (!this.gespielteKarten.contains(empfangeneKarte)) {
-			System.out.println("[ClientHandler" + clientHandlerId + "] Anti-Cheat Prüfung war erfolgreich was okay!");
-		} else {
-			System.out.println("[ClientHandler" + clientHandlerId + "] Anti-Cheat Prüfung hat eine Cheat erkannt!");
-			myServer.shutDownServer(543210);
-		}
-		gespielteKarten.add(empfangeneKarte);
-		session.spieleKarteAus(clientHandlerId, stichNummer, empfangeneKarte);
-		// ausgabeSpielplan(); // Fuer Debuginformationen sinnvoll
-		while (aktuellerStich == null) {
-			try {
-				System.out.println("[ClientHandler" + clientHandlerId + "] warte " + delay + " ms ");
-				Thread.sleep(delay);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			aktuellerStich = session.stichFuerRundeAuswerten(stichNummer);
-		}
-		return aktuellerStich;
-	}
+    /**
+     * Methode spielt eine Karte des Client in der Session aus und wartet auf die
+     * Karten aller anderen Mitspieler. Dann wird das Ergebnis in Form eines Stichs
+     * an den Client zurueck zu geben
+     *
+     * @param stichNummer
+     * @param empfangeneKarte
+     * @return
+     */
+    private YoolooStich spieleKarte(int stichNummer, YoolooKarte empfangeneKarte) {
+        YoolooStich aktuellerStich = null;
+        System.out.println("[ClientHandler" + clientHandlerId + "] spiele Stich Nr: " + stichNummer
+                + " KarteKarte empfangen: " + empfangeneKarte.toString());
+        if (!this.gespielteKarten.contains(empfangeneKarte)) {
+            System.out.println("[ClientHandler" + clientHandlerId + "] Anti-Cheat Prüfung war erfolgreich was okay!");
+        } else {
+            System.out.println("[ClientHandler" + clientHandlerId + "] Anti-Cheat Prüfung hat eine Cheat erkannt!");
+            myServer.shutDownServer(543210);
+        }
+        gespielteKarten.add(empfangeneKarte);
+        session.spieleKarteAus(clientHandlerId, stichNummer, empfangeneKarte);
+        // ausgabeSpielplan(); // Fuer Debuginformationen sinnvoll
+        while (aktuellerStich == null) {
+            try {
+                System.out.println("[ClientHandler" + clientHandlerId + "] warte " + delay + " ms ");
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            aktuellerStich = session.stichFuerRundeAuswerten(stichNummer);
+        }
+        return aktuellerStich;
+    }
 
-	public void setHandlerID(int clientHandlerId) {
-		System.out.println("[ClientHandler" + clientHandlerId + "] clientHandlerId " + clientHandlerId);
-		this.clientHandlerId = clientHandlerId;
+    public void setHandlerID(int clientHandlerId) {
+        System.out.println("[ClientHandler" + clientHandlerId + "] clientHandlerId " + clientHandlerId);
+        this.clientHandlerId = clientHandlerId;
 
-	}
+    }
 
-	public void ausgabeSpielplan() {
-		System.out.println("Aktueller Spielplan");
-		for (int i = 0; i < session.getSpielplan().length; i++) {
-			for (int j = 0; j < session.getSpielplan()[i].length; j++) {
-				System.out.println("[ClientHandler" + clientHandlerId + "][i]:" + i + " [j]:" + j + " Karte: "
-						+ session.getSpielplan()[i][j]);
-			}
-		}
-	}
+    public void ausgabeSpielplan() {
+        System.out.println("Aktueller Spielplan");
+        for (int i = 0; i < session.getSpielplan().length; i++) {
+            for (int j = 0; j < session.getSpielplan()[i].length; j++) {
+                System.out.println("[ClientHandler" + clientHandlerId + "][i]:" + i + " [j]:" + j + " Karte: "
+                        + session.getSpielplan()[i][j]);
+            }
+        }
+    }
 
-	/**
-	 * Gemeinsamer Datenbereich fuer den Austausch zwischen den ClientHandlern.
-	 * Dieser wird im jedem Clienthandler der Session verankert. Schreibender
-	 * Zugriff in dieses Object muss threadsicher synchronisiert werden!
-	 * 
-	 * @param session
-	 */
-	public void joinSession(YoolooSession session) {
-		System.out.println("[ClientHandler" + clientHandlerId + "] joinSession " + session.toString());
-		this.session = session;
+    /**
+     * Gemeinsamer Datenbereich fuer den Austausch zwischen den ClientHandlern.
+     * Dieser wird im jedem Clienthandler der Session verankert. Schreibender
+     * Zugriff in dieses Object muss threadsicher synchronisiert werden!
+     *
+     * @param session
+     */
+    public void joinSession(YoolooSession session) {
+        System.out.println("[ClientHandler" + clientHandlerId + "] joinSession " + session.toString());
+        this.session = session;
 
-	}
+    }
 
 }

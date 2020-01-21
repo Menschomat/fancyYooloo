@@ -4,8 +4,6 @@
 
 package allgemein;
 
-
-import server.bot.YoolooBotServer;
 import server.YoolooServer;
 import server.YoolooServer.GameMode;
 
