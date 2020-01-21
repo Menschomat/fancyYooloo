@@ -60,7 +60,7 @@ public class YoolooClient {
             while (clientState != ClientState.CLIENTSTATE_DISCONNECTED && ois != null && oos != null) {
                 // 1. Schritt Kommado empfangen
                 ServerMessage kommandoMessage = empfangeKommando();
-                System.out.println("[id-x]ClientStatus: " + clientState + "] " + kommandoMessage.toString());
+                logger.fine("[id-x]ClientStatus: " + clientState + "] " + kommandoMessage.toString());
                 // 2. Schritt ClientState ggfs aktualisieren (fuer alle neuen Kommandos)
                 ClientState newClientState = kommandoMessage.getNextClientState();
                 if (newClientState != null) {
@@ -79,7 +79,7 @@ public class YoolooClient {
                         }
                         // Client meldet den Spieler an den Server
                         oos.writeObject(newLogin);
-                        System.out.println("[id-x]ClientStatus: " + clientState + "] : LoginMessage fuer  " + spielerName
+                        logger.fine("[id-x]ClientStatus: " + clientState + "] : LoginMessage fuer  " + spielerName
                                 + " an server gesendet warte auf Spielerdaten");
                         empfangeSpieler();
                         // ausgabeKartenSet();
@@ -98,7 +98,7 @@ public class YoolooClient {
                         spieleStich(kommandoMessage.getParamInt());
                         break;
                     case SERVERMESSAGE_RESULT_SET:
-                        System.out.println("[id-" + meinSpieler.getClientHandlerId() + "]ClientStatus: " + clientState
+                        logger.fine("[id-" + meinSpieler.getClientHandlerId() + "]ClientStatus: " + clientState
                                 + "] : Ergebnis ausgeben ");
                         String ergebnis = empfangeErgebnis();
                         System.out.println(ergebnis.toString());
@@ -131,14 +131,14 @@ public class YoolooClient {
             try {
                 serverSocket = new Socket(serverHostname, serverPort);
             } catch (ConnectException e) {
-                System.out.println("Server antwortet nicht - ggfs. neu starten");
+                logger.warning("Server antwortet nicht - ggfs. neu starten");
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {
                 }
             }
         }
-        System.out.println("[Client] Serversocket eingerichtet: " + serverSocket.toString());
+        logger.fine("[Client] Serversocket eingerichtet: " + serverSocket.toString());
         // Kommunikationskanuele einrichten
         ois = new ObjectInputStream(serverSocket.getInputStream());
         oos = new ObjectOutputStream(serverSocket.getOutputStream());
@@ -215,7 +215,7 @@ public class YoolooClient {
 
     public void ausgabeKartenSet() {
         // Ausgabe Kartenset
-        System.out.println("[id-" + meinSpieler.getClientHandlerId() + "]ClientStatus: " + clientState
+        logger.fine("[id-" + meinSpieler.getClientHandlerId() + "]ClientStatus: " + clientState
                 + "] : Uebermittelte Kartensortierung beim Login ");
         for (int i = 0; i < meinSpieler.getAktuelleSortierung().length; i++) {
             System.out.println("[id-" + meinSpieler.getClientHandlerId() + "]ClientStatus: " + clientState
