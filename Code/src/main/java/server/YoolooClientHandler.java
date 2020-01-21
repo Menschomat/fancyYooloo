@@ -101,6 +101,7 @@ public class YoolooClientHandler extends Thread {
 						LoginMessage newLogin = (LoginMessage) antwortObject;
 						if (playerAlreadyInSession(newLogin.getSpielerName())) {
 							logger.info("run| Player already part of session, disconnecting");
+							sendeKommando(ServerMessageType.SERVERMESSAGE_CHANGE_STATE, ClientState.CLIENTSTATE_DISCONNECTED,  null);
 							this.state = ServerState.ServerState_DISCONNECT;
 							break;
 						} else {
