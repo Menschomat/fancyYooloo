@@ -10,12 +10,12 @@ import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
-import common.LoginMessage;
-import common.YoolooKartenspiel;
-import common.YoolooSpieler;
-import common.YoolooStich;
+import common.*;
 import messages.ClientMessage;
 import messages.ClientMessage.ClientMessageType;
 import messages.ServerMessage;
@@ -34,6 +34,8 @@ public class YoolooClient {
     private LoginMessage newLogin = null;
     private YoolooSpieler meinSpieler;
     private YoolooStich[] spielVerlauf = null;
+
+    Logger logger = Logger.getLogger(YoolooClient.class.getName());
 
     public YoolooClient() {
         super();
@@ -84,7 +86,7 @@ public class YoolooClient {
                         break;
                     case SERVERMESSAGE_SORT_CARD_SET:
                         // sortieren Karten
-                        meinSpieler.sortierungFestlegen();
+                        meinSpieler.setAktuelleSortierung(fancySortierung());
                         ausgabeKartenSet();
                         // ggfs. Spielverlauf löschen
                         spielVerlauf = new YoolooStich[YoolooKartenspiel.maxKartenWert];
@@ -234,6 +236,42 @@ public class YoolooClient {
         CLIENTSTATE_DISCONNECTED // Vebindung wurde getrennt
     }
 
-    ;
+    public YoolooKarte[] sortierungFestlegen() {
+        YoolooKarte[] neueSortierung = new YoolooKarte[this.meinSpieler.getAktuelleSortierung().length];
+        for (int i = 0; i < neueSortierung.length; i++) {
+            int neuerIndex = (int) (Math.random() * neueSortierung.length);
+            while (neueSortierung[neuerIndex] != null) {
+                neuerIndex = (int) (Math.random() * neueSortierung.length);
+            }
+            neueSortierung[neuerIndex] = meinSpieler.getAktuelleSortierung()[i];
+            // System.out.println(i+ ". neuerIndex: "+neuerIndex);
+        }
+        return neueSortierung;
+    }
+
+    public YoolooKarte[] fancySortierung() {
+        YoolooKarte[] fancySortierung = new YoolooKarte[this.meinSpieler.getAktuelleSortierung().length];
+        Random random = new Random();
+        int asdf = random.nextInt(2);
+        switch (asdf) {
+            case 0:
+                fancySortierung = sortierungFestlegen();
+                logger.log(Level.INFO, "Karten wurden Random sortiert.");
+                break;
+            case 1:
+                for (int i = 0; i < fancySortierung.length; i++) {
+                    fancySortierung[i] = meinSpieler.getAktuelleSortierung()[i];
+                }
+                logger.log(Level.INFO, "Karten wurde von klein nach groß sortiert.");
+                break;
+            case 2:
+                for (int i = 0; i < fancySortierung.length; i++) {
+                    fancySortierung[i] = meinSpieler.getAktuelleSortierung()[meinSpieler.getAktuelleSortierung().length - 1 - i];
+                }
+                logger.log(Level.INFO, "Karten wurde von groß nach klein sortiert.");
+                break;
+        }
+        return fancySortierung;
+    }
 
 }
