@@ -18,7 +18,7 @@ public class YoolooFileWriter {
                 usersFile.createNewFile();
                 saveUsers(new YoolooPersistance());
             } catch (IOException e) {
-                logger.severe("YoolooFileWriter| Encountered IOException: " + e.getMessage());
+                logger.severe("IOException: " + e.getMessage());
             }
         }
     }
@@ -27,23 +27,23 @@ public class YoolooFileWriter {
     public void saveUsers(YoolooPersistance users) {
         try(ObjectOutputStream writer = new ObjectOutputStream(new FileOutputStream(new File(filePath)))) {
             writer.writeObject(users);
-            logger.fine("saveUsers| Success");
+            logger.fine("Spielerdatei gespeichert");
         } catch(IOException e) {
-            logger.severe("saveUsers| Encountered IOException: " + e.getMessage());
+            logger.severe("IOException: " + e.getMessage());
         }
     }
 
     public YoolooPersistance loadUsers() {
         try(ObjectInputStream reader = new ObjectInputStream(new FileInputStream(new File(filePath)))) {
             YoolooPersistance users = (YoolooPersistance) reader.readObject();
-            logger.fine("loadUsers| Success");
+            logger.fine("Spielerdatei geladen");
             return users;
         } catch(IOException e) {
-            logger.severe("loadUsers| Encountered IOException: " + e.getMessage());
+            logger.severe("IOException: " + e.getMessage());
         } catch(ClassNotFoundException e) {
-            logger.severe("loadUsers| Encountered ClassNotFoundException: " + e.getMessage());
+            logger.severe("ClassNotFoundException: " + e.getMessage());
         }
-        logger.info("loadUsers| Returning default empty Users");
+        logger.info("Spielerdatei konnte nicht geladen werden, gebe leeres Objekt zurück");
         return new YoolooPersistance();
     }
 

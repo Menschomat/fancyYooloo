@@ -5,9 +5,12 @@
 package common;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 
 public class YoolooKartenspiel {
+
+    Logger logger = Logger.getLogger(getClass().getName());
 
     public boolean hasPlayer(String playerName) {
         return spielerliste.stream().map(YoolooSpieler::getName).anyMatch(s -> s.equals(playerName));
@@ -35,7 +38,7 @@ public class YoolooKartenspiel {
     public YoolooKartenspiel() {
 
         setSpielname("Yooloo" + System.currentTimeMillis());
-        System.out.println("[YoolooKartenSpiel] Spielname: " + getSpielname()); // TODO evtl loeschen
+        logger.fine("[YoolooKartenSpiel] Spielname: " + getSpielname()); // TODO evtl loeschen
 
         spielerliste.clear();
         spielkarten = new YoolooKarte[anzahlFarben][anzahlWerte];
@@ -45,15 +48,15 @@ public class YoolooKartenspiel {
                 spielkarten[farbe][wert] = new YoolooKarte(Kartenfarbe.values()[farbe], (wert + 1));
             }
         }
-        System.out.println("Je " + anzahlWerte + " Spielkarten fuer " + anzahlFarben + " Spieler zeugt");
+        logger.fine("Je " + anzahlWerte + " Spielkarten fuer " + anzahlFarben + " Spieler zeugt");
     }
 
     public void listeSpielstand() {
         if (spielerliste.isEmpty()) {
-            System.out.println("(Noch) Keine Spieler registriert");
+            logger.fine("(Noch) Keine Spieler registriert");
         } else {
             for (YoolooSpieler yoolooSpieler : spielerliste) {
-                System.out.println(yoolooSpieler.toString());
+                logger.fine(yoolooSpieler.toString());
             }
         }
 
@@ -73,7 +76,7 @@ public class YoolooKartenspiel {
         YoolooKarte[] spielerkarten = spielkarten[spielerliste.size()];
         neuerSpieler.setAktuelleSortierung(spielerkarten);
         this.spielerliste.add(neuerSpieler);
-        System.out.println("Debug; Spieler " + name + " registriert als : " + neuerSpieler);
+        logger.fine("Debug; Spieler " + name + " registriert als : " + neuerSpieler);
         return neuerSpieler;
     }
 
@@ -90,7 +93,7 @@ public class YoolooKartenspiel {
         YoolooKarte[] kartenDesSpielers = spielkarten[neuerSpieler.getClientHandlerId()];
         neuerSpieler.setAktuelleSortierung(kartenDesSpielers);
         this.spielerliste.add(neuerSpieler); // nur fuer Simulation noetig!
-        System.out.println("Debug; Spielerobject registriert als : " + neuerSpieler);
+        logger.fine("Debug; Spielerobject registriert als : " + neuerSpieler);
         return neuerSpieler;
     }
 

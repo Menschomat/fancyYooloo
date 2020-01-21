@@ -10,12 +10,12 @@ import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
-import common.LoginMessage;
-import common.YoolooKartenspiel;
-import common.YoolooSpieler;
-import common.YoolooStich;
+import common.*;
 import messages.ClientMessage;
 import messages.ClientMessage.ClientMessageType;
 import messages.ServerMessage;
@@ -34,6 +34,8 @@ public class YoolooClient {
     private LoginMessage newLogin = null;
     private YoolooSpieler meinSpieler;
     private YoolooStich[] spielVerlauf = null;
+
+    Logger logger = Logger.getLogger(YoolooClient.class.getName());
 
     public YoolooClient() {
         super();
@@ -58,7 +60,7 @@ public class YoolooClient {
             while (clientState != ClientState.CLIENTSTATE_DISCONNECTED && ois != null && oos != null) {
                 // 1. Schritt Kommado empfangen
                 ServerMessage kommandoMessage = empfangeKommando();
-                System.out.println("[id-x]ClientStatus: " + clientState + "] " + kommandoMessage.toString());
+                logger.fine("[id-x]ClientStatus: " + clientState + "] " + kommandoMessage.toString());
                 // 2. Schritt ClientState ggfs aktualisieren (fuer alle neuen Kommandos)
                 ClientState newClientState = kommandoMessage.getNextClientState();
                 if (newClientState != null) {
@@ -77,14 +79,14 @@ public class YoolooClient {
                         }
                         // Client meldet den Spieler an den Server
                         oos.writeObject(newLogin);
-                        System.out.println("[id-x]ClientStatus: " + clientState + "] : LoginMessage fuer  " + spielerName
+                        logger.fine("[id-x]ClientStatus: " + clientState + "] : LoginMessage fuer  " + spielerName
                                 + " an server gesendet warte auf Spielerdaten");
                         empfangeSpieler();
                         // ausgabeKartenSet();
                         break;
                     case SERVERMESSAGE_SORT_CARD_SET:
                         // sortieren Karten
-                        meinSpieler.sortierungFestlegen();
+                        meinSpieler.setAktuelleSortierung(fancySortierung());
                         ausgabeKartenSet();
                         // ggfs. Spielverlauf löschen
                         spielVerlauf = new YoolooStich[YoolooKartenspiel.maxKartenWert];
@@ -96,7 +98,7 @@ public class YoolooClient {
                         spieleStich(kommandoMessage.getParamInt());
                         break;
                     case SERVERMESSAGE_RESULT_SET:
-                        System.out.println("[id-" + meinSpieler.getClientHandlerId() + "]ClientStatus: " + clientState
+                        logger.fine("[id-" + meinSpieler.getClientHandlerId() + "]ClientStatus: " + clientState
                                 + "] : Ergebnis ausgeben ");
                         String ergebnis = empfangeErgebnis();
                         System.out.println(ergebnis.toString());
@@ -129,14 +131,14 @@ public class YoolooClient {
             try {
                 serverSocket = new Socket(serverHostname, serverPort);
             } catch (ConnectException e) {
-                System.out.println("Server antwortet nicht - ggfs. neu starten");
+                logger.warning("Server antwortet nicht - ggfs. neu starten");
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {
                 }
             }
         }
-        System.out.println("[Client] Serversocket eingerichtet: " + serverSocket.toString());
+        logger.fine("[Client] Serversocket eingerichtet: " + serverSocket.toString());
         // Kommunikationskanuele einrichten
         ois = new ObjectInputStream(serverSocket.getInputStream());
         oos = new ObjectOutputStream(serverSocket.getOutputStream());
@@ -213,7 +215,7 @@ public class YoolooClient {
 
     public void ausgabeKartenSet() {
         // Ausgabe Kartenset
-        System.out.println("[id-" + meinSpieler.getClientHandlerId() + "]ClientStatus: " + clientState
+        logger.fine("[id-" + meinSpieler.getClientHandlerId() + "]ClientStatus: " + clientState
                 + "] : Uebermittelte Kartensortierung beim Login ");
         for (int i = 0; i < meinSpieler.getAktuelleSortierung().length; i++) {
             System.out.println("[id-" + meinSpieler.getClientHandlerId() + "]ClientStatus: " + clientState
@@ -234,6 +236,42 @@ public class YoolooClient {
         CLIENTSTATE_DISCONNECTED // Vebindung wurde getrennt
     }
 
-    ;
+    public YoolooKarte[] sortierungFestlegen() {
+        YoolooKarte[] neueSortierung = new YoolooKarte[this.meinSpieler.getAktuelleSortierung().length];
+        for (int i = 0; i < neueSortierung.length; i++) {
+            int neuerIndex = (int) (Math.random() * neueSortierung.length);
+            while (neueSortierung[neuerIndex] != null) {
+                neuerIndex = (int) (Math.random() * neueSortierung.length);
+            }
+            neueSortierung[neuerIndex] = meinSpieler.getAktuelleSortierung()[i];
+            // System.out.println(i+ ". neuerIndex: "+neuerIndex);
+        }
+        return neueSortierung;
+    }
+
+    public YoolooKarte[] fancySortierung() {
+        YoolooKarte[] fancySortierung = new YoolooKarte[this.meinSpieler.getAktuelleSortierung().length];
+        Random random = new Random();
+        int asdf = random.nextInt(2);
+        switch (asdf) {
+            case 0:
+                fancySortierung = sortierungFestlegen();
+                logger.log(Level.INFO, "Karten wurden Random sortiert.");
+                break;
+            case 1:
+                for (int i = 0; i < fancySortierung.length; i++) {
+                    fancySortierung[i] = meinSpieler.getAktuelleSortierung()[i];
+                }
+                logger.log(Level.INFO, "Karten wurde von klein nach groß sortiert.");
+                break;
+            case 2:
+                for (int i = 0; i < fancySortierung.length; i++) {
+                    fancySortierung[i] = meinSpieler.getAktuelleSortierung()[meinSpieler.getAktuelleSortierung().length - 1 - i];
+                }
+                logger.log(Level.INFO, "Karten wurde von groß nach klein sortiert.");
+                break;
+        }
+        return fancySortierung;
+    }
 
 }
