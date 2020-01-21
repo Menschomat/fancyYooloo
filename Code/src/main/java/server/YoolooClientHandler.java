@@ -118,14 +118,14 @@ public class YoolooClientHandler extends Thread {
 				case ServerState_PLAY_SESSION:
 					switch (session.getGamemode()) {
 					case GAMEMODE_SINGLE_GAME:
-						List<Integer> cardsPlayed = new ArrayList<>();
+						meinSpieler.setLetzteSortierung(new ArrayList<>());
 						// Triggersequenz zur Abfrage der einzelnen Karten des Spielers
 						for (int stichNummer = 0; stichNummer < YoolooKartenspiel.maxKartenWert; stichNummer++) {
 							sendeKommando(ServerMessageType.SERVERMESSAGE_SEND_CARD,
 									ClientState.CLIENTSTATE_PLAY_SINGLE_GAME, null, stichNummer);
 							// Neue YoolooKarte in Session ausspielen und Stich abfragen
 							YoolooKarte neueKarte = (YoolooKarte) empfangeVomClient();
-							cardsPlayed.add(neueKarte.getWert());
+							meinSpieler.getLetzteSortierung().add(neueKarte);
 							logger.fine("[ClientHandler" + clientHandlerId + "] Karte empfangen:" + neueKarte);
 							YoolooStich currentstich = spieleKarte(stichNummer, neueKarte);
 							// Punkte fuer gespielten Stich ermitteln
@@ -138,7 +138,7 @@ public class YoolooClientHandler extends Thread {
 							oos.writeObject(currentstich);
 						}
 						this.state = ServerState.ServerState_DISCONNECT;
-						myServer.getUsers().setUserCardOrder(meinSpieler.getName(), cardsPlayed);
+						myServer.getUsers().setUserCardOrder(meinSpieler);
 						break;
 					default:
 						logger.fine("[ClientHandler" + clientHandlerId + "] GameMode nicht implementiert");
