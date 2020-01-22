@@ -17,6 +17,8 @@ public class YoolooSession {
     private YoolooKartenspiel aktuellesSpiel;
     private YoolooStich[] ausgewerteteStiche;
 
+    private YoolooServer server;
+
     public YoolooSession(int anzahlSpielerInRunde) {
         super();
         this.anzahlSpielerInRunde = anzahlSpielerInRunde;
@@ -27,15 +29,29 @@ public class YoolooSession {
             ausgewerteteStiche[i] = null;
         }
         aktuellesSpiel = new YoolooKartenspiel();
+        server = null;
     }
 
-    public YoolooSession(int anzahlSpielerInRunde, GameMode gamemode) {
+    public YoolooSession(int anzahlSpielerInRunde, GameMode gamemode, YoolooServer server) {
         this(anzahlSpielerInRunde);
         this.gamemode = gamemode;
+        this.server = server;
     }
 
-    public synchronized void spieleKarteAus(int stichNummer, int spielerID, YoolooKarte karte) {
+    public synchronized boolean spieleKarteAus(int stichNummer, int spielerID, YoolooKarte karte) {
         spielplan[spielerID][stichNummer] = karte;
+
+        for (int i = 0; i < spielplan[spielerID].length; i++) {
+            if (spielplan[spielerID][i].getWert() == karte.getWert()) {
+                System.out.println("Spieler [ID: " + spielerID +  "] hat die Regeln nicht eingehalten, Runde wird abgebrochen!");
+                if (server != null) {
+                    server.shutDownServer(543210);
+                }
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public synchronized YoolooStich stichFuerRundeAuswerten(int stichNummer) {

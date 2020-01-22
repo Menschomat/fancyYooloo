@@ -99,7 +99,7 @@ public class YoolooServer {
                 // Neue Session starten wenn ausreichend Spieler verbunden sind!
                 if (clientHandlerList.size() >= Math.min(spielerProRunde, YoolooKartenspiel.Kartenfarbe.values().length)) {
                     // Init Session
-                    YoolooSession yoolooSession = new YoolooSession(clientHandlerList.size(), serverGameMode);
+                    YoolooSession yoolooSession = new YoolooSession(clientHandlerList.size(), serverGameMode, this);
 
                     // Starte pro Client einen ClientHandlerTread
                     for (int i = 0; i < clientHandlerList.size(); i++) {
