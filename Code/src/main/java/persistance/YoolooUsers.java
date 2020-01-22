@@ -1,6 +1,5 @@
 package persistance;
 
-import com.sun.istack.internal.NotNull;
 import common.YoolooKarte;
 import common.YoolooSpieler;
 

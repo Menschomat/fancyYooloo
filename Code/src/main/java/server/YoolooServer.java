@@ -4,6 +4,7 @@
 
 package server;
 
+import client.YoolooClient;
 import common.YoolooKartenspiel;
 import persistance.YoolooUsers;
 
@@ -25,26 +26,19 @@ public class YoolooServer {
     // Server Standardwerte koennen ueber zweite Konstruktor modifiziert werden!
     private int port = 44137;
     private int spielerProRunde = 8; // min 1, max Anzahl definierte Farben in Enum YoolooKartenSpiel.KartenFarbe)
+    private int minRealPlayers = 0;
+    private int waitForPlayers = 10; //seconds to wait befor bot-Spawn
+    private boolean botSpawnerRunning = false;
     private GameMode serverGameMode = GameMode.GAMEMODE_SINGLE_GAME;
     private YoolooUsers users = new YoolooUsers();
-
-    public GameMode getServerGameMode() {
-        return serverGameMode;
-    }
-
-    private Logger logger = Logger.getLogger(getClass().getName());
-
-    public void setServerGameMode(GameMode serverGameMode) {
-        this.serverGameMode = serverGameMode;
-    }
-
+    private Logger logger = Logger.getLogger("YoolooServer");
     private ServerSocket serverSocket = null;
     private boolean serverAktiv = true;
 
     // private ArrayList<Thread> spielerThreads;
     private ArrayList<YoolooClientHandler> clientHandlerList = new ArrayList<>();
 
-    private ExecutorService spielerPool;
+    private ExecutorService spielerPool = Executors.newCachedThreadPool();
 
     /**
      * Serverseitig durch ClientHandler angebotenen SpielModi. Bedeutung der
@@ -61,12 +55,12 @@ public class YoolooServer {
         GAMEMODE_PLAY_POKAL_LL // noch nicht genutzt: Spielmodus: KO System mit Lucky Looser
     }
 
-    ;
-
-    public YoolooServer(int port, int spielerProRunde, GameMode gameMode) {
+    public YoolooServer(int port, int spielerProRunde, int minRealPlayers, int waitForPlayers, GameMode gameMode) {
         this.port = port;
         this.spielerProRunde = spielerProRunde;
         this.serverGameMode = gameMode;
+        this.minRealPlayers = minRealPlayers;
+        this.waitForPlayers = waitForPlayers;
     }
 
     private void printBanner() {
@@ -80,7 +74,6 @@ public class YoolooServer {
         } catch (IOException e) {
             logger.warning("No banner was found!");
         }
-
     }
 
     public void startServer() {
@@ -90,13 +83,12 @@ public class YoolooServer {
             serverSocket = new ServerSocket(port);
             spielerPool = Executors.newCachedThreadPool();
             logger.fine("Server gestartet - warte auf Spieler");
-
             while (serverAktiv) {
-                Socket client = null;
-
                 // Neue Spieler registrieren
+                if (!botSpawnerRunning)
+                    spawnBots();
                 try {
-                    client = serverSocket.accept();
+                    Socket client = serverSocket.accept();
                     YoolooClientHandler clientHandler = new YoolooClientHandler(this, client);
                     clientHandlerList.add(clientHandler);
                     logger.fine("[YoolooServer] Anzahl verbundene Spieler: " + clientHandlerList.size());
@@ -104,10 +96,8 @@ public class YoolooServer {
                     logger.severe("Client Verbindung gescheitert");
                     e.printStackTrace();
                 }
-
                 // Neue Session starten wenn ausreichend Spieler verbunden sind!
-                if (clientHandlerList.size() >= Math.min(spielerProRunde,
-                        YoolooKartenspiel.Kartenfarbe.values().length)) {
+                if (clientHandlerList.size() >= Math.min(spielerProRunde, YoolooKartenspiel.Kartenfarbe.values().length)) {
                     // Init Session
                     YoolooSession yoolooSession = new YoolooSession(clientHandlerList.size(), serverGameMode);
 
@@ -119,8 +109,9 @@ public class YoolooServer {
                         spielerPool.execute(ch); // Start der ClientHandlerThread - Aufruf der Methode run()
                     }
 
-                    // nuechste Runde eroeffnen
+                    // nächste Runde eröffnen
                     clientHandlerList = new ArrayList<YoolooClientHandler>();
+                    botSpawnerRunning = false;
                 }
             }
         } catch (IOException e1) {
@@ -131,13 +122,59 @@ public class YoolooServer {
 
     }
 
-    public YoolooUsers getUsers() {
-        return users;
+    private void spawnBots() {
+        botSpawnerRunning = true;
+        spielerPool.execute(new Runnable() {
+            private YoolooServer yoolooServer;
+
+            public Runnable init(YoolooServer yoolooServer) {
+                this.yoolooServer = yoolooServer;
+                return (this);
+            }
+
+            @Override
+            public void run() {
+                long startTime = System.currentTimeMillis();
+                while (yoolooServer.getClientCount() < yoolooServer.getSpielerProRunde()) {
+                    try {
+                        if (yoolooServer.getClientCount() < minRealPlayers) {
+                            logger.info("Zu wenige Spieler für einen Bot-Spawn");
+                            startTime = System.currentTimeMillis();
+                            Thread.sleep(3000);
+                            continue;
+                        }
+                        logger.info("Bot-Spawn in " + (waitForPlayers - ((System.currentTimeMillis() / 1000) - startTime / 1000)) + "s");
+                        if (yoolooServer.botSpawnCriteriaOk(startTime)) {
+                            int target = spielerProRunde - yoolooServer.getClientCount();
+                            for (int i = 0; i < target; i++) {
+                                logger.info("SPAWNING BOT" + i);
+                                spielerPool.execute(() -> new YoolooClient().startClient());
+                                Thread.sleep(200);
+                            }
+                            Thread.currentThread().interrupt();
+                            return;
+                        }
+
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.init(this));
     }
 
-    public int getClientCount() {
-        return clientHandlerList.size();
+    private boolean botSpawnCriteriaOk(long startedSearchTime) {
+
+        return clientSpawnTimeExceeded(startedSearchTime)
+                && clientHandlerList.size() >= minRealPlayers
+                && clientHandlerList.size() != spielerProRunde;
     }
+
+    private boolean clientSpawnTimeExceeded(long startedSearch) {
+        return ((System.currentTimeMillis() / 1000) - startedSearch / 1000) > waitForPlayers;
+    }
+
 
     // TODO Dummy zur Serverterminierung noch nicht funktional
     public void shutDownServer(int code) {
@@ -148,5 +185,25 @@ public class YoolooServer {
         } else {
             logger.warning("Servercode falsch");
         }
+    }
+
+    public YoolooUsers getUsers() {
+        return users;
+    }
+
+    public int getClientCount() {
+        return clientHandlerList.size();
+    }
+
+    public int getSpielerProRunde() {
+        return spielerProRunde;
+    }
+
+    public GameMode getServerGameMode() {
+        return serverGameMode;
+    }
+
+    public void setServerGameMode(GameMode serverGameMode) {
+        this.serverGameMode = serverGameMode;
     }
 }

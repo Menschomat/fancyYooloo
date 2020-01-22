@@ -154,7 +154,7 @@ public class YoolooClientHandler extends Thread {
 					this.state = ServerState.ServerState_DISCONNECTED;
 					break;
 				default:
-					logger.fine("Undefinierter Serverstatus - tue mal nichts!");
+					System.out.println("Undefinierter Serverstatus - tue mal nichts!");
 				}
 			}
 		} catch (EOFException e) {
@@ -164,7 +164,7 @@ public class YoolooClientHandler extends Thread {
 			System.err.println(e);
 			e.printStackTrace();
 		} finally {
-			logger.fine("[ClientHandler" + clientHandlerId + "] Verbindung zu " + socketAddress + " beendet");
+			System.out.println("[ClientHandler" + clientHandlerId + "] Verbindung zu " + socketAddress + " beendet");
 		}
 
 	}
