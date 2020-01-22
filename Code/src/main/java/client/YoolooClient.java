@@ -275,4 +275,8 @@ public class YoolooClient {
         return fancySortierung;
     }
 
+    public void setName(String spielerName) {
+        this.spielerName = spielerName;
+    }
+
 }
