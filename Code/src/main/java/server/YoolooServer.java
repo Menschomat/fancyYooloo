@@ -26,7 +26,7 @@ public class YoolooServer {
     // Server Standardwerte koennen ueber zweite Konstruktor modifiziert werden!
     private int port = 44137;
     private int spielerProRunde = 8; // min 1, max Anzahl definierte Farben in Enum YoolooKartenSpiel.KartenFarbe)
-    private int minRealPlayers = 1;
+    private int minRealPlayers = 0;
     private int waitForPlayers = 10; //seconds to wait befor bot-Spawn
     private boolean botSpawnerRunning = false;
     private GameMode serverGameMode = GameMode.GAMEMODE_SINGLE_GAME;
@@ -55,10 +55,12 @@ public class YoolooServer {
         GAMEMODE_PLAY_POKAL_LL // noch nicht genutzt: Spielmodus: KO System mit Lucky Looser
     }
 
-    public YoolooServer(int port, int spielerProRunde, GameMode gameMode) {
+    public YoolooServer(int port, int spielerProRunde, int minRealPlayers, int waitForPlayers, GameMode gameMode) {
         this.port = port;
         this.spielerProRunde = spielerProRunde;
         this.serverGameMode = gameMode;
+        this.minRealPlayers = minRealPlayers;
+        this.waitForPlayers = waitForPlayers;
     }
 
     private void printBanner() {
@@ -143,9 +145,11 @@ public class YoolooServer {
                         }
                         logger.info("Bot-Spawn in " + (waitForPlayers - ((System.currentTimeMillis() / 1000) - startTime / 1000)) + "s");
                         if (yoolooServer.botSpawnCriteriaOk(startTime)) {
-                            for (int i = 1; i == spielerProRunde - yoolooServer.getClientCount(); i++) {
+                            int target = spielerProRunde - yoolooServer.getClientCount();
+                            for (int i = 0; i < target; i++) {
                                 logger.info("SPAWNING BOT" + i);
                                 spielerPool.execute(() -> new YoolooClient().startClient());
+                                Thread.sleep(200);
                             }
                             Thread.currentThread().interrupt();
                             return;

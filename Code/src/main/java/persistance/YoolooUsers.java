@@ -6,6 +6,7 @@ import common.YoolooSpieler;
 import java.io.Serializable;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class YoolooUsers implements Serializable {
 
@@ -19,8 +20,8 @@ public class YoolooUsers implements Serializable {
         persistance = fileWriter.loadUsers();
     }
 
-    public synchronized void setUserCardOrder(String username, List<Integer> cardValuesInOrder) {
-        persistance.getUsers().put(username, new ArrayList<>(cardValuesInOrder));
+    public synchronized void setUserCardOrder(YoolooSpieler meinSpieler) {
+        persistance.getUsers().put(meinSpieler.getName(), new ArrayList<>(meinSpieler.getLetzteSortierung().stream().map(YoolooKarte::getWert).collect(Collectors.toList())));
         fileWriter.saveUsers(persistance);
     }
 
