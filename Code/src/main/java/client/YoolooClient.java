@@ -19,6 +19,7 @@ import common.*;
 import messages.ClientMessage;
 import messages.ClientMessage.ClientMessageType;
 import messages.ServerMessage;
+import utils.PropertiesController;
 
 
 public class YoolooClient {
@@ -35,7 +36,7 @@ public class YoolooClient {
     private YoolooSpieler meinSpieler;
     private YoolooStich[] spielVerlauf = null;
 
-    Logger logger = Logger.getLogger(YoolooClient.class.getName());
+    Logger logger = PropertiesController.getLogger(YoolooClient.class.getName());
 
     public YoolooClient() {
         super();

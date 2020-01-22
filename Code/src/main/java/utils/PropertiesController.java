@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.logging.*;
 
 public abstract class PropertiesController {
     private static final ClassLoader classLoader = PropertiesController.class.getClassLoader();
@@ -23,5 +24,16 @@ public abstract class PropertiesController {
             }
         }
         return properties;
+    }
+
+    public static Logger getLogger(String name) {
+        Logger logger = Logger.getLogger(name);
+        Properties properties = getProperties("logging");
+        Level level = Level.parse(properties.getProperty(".level"));
+        logger.setLevel(level);
+        Handler handler = new ConsoleHandler();
+        handler.setLevel(level);
+        logger.addHandler(handler);
+        return logger;
     }
 }

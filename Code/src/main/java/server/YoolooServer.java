@@ -7,6 +7,7 @@ package server;
 import client.YoolooClient;
 import common.YoolooKartenspiel;
 import persistance.YoolooUsers;
+import utils.PropertiesController;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,7 +32,7 @@ public class YoolooServer {
     private boolean botSpawnerRunning = false;
     private GameMode serverGameMode = GameMode.GAMEMODE_SINGLE_GAME;
     private YoolooUsers users = new YoolooUsers();
-    private Logger logger = Logger.getLogger("YoolooServer");
+    private Logger logger = PropertiesController.getLogger("YoolooServer");
     private ServerSocket serverSocket = null;
     private boolean serverAktiv = true;
 
