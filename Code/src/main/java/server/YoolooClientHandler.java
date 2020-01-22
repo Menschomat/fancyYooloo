@@ -161,7 +161,7 @@ public class YoolooClientHandler extends Thread {
 			System.err.println(e);
 			e.printStackTrace();
 		} finally {
-			System.out.println("[ClientHandler" + clientHandlerId + "] Verbindung zu " + socketAddress + " beendet");
+			logger.fine("[ClientHandler" + clientHandlerId + "] Verbindung zu " + socketAddress + " beendet");
 		}
 
 	}
@@ -184,7 +184,7 @@ public class YoolooClientHandler extends Thread {
 	private void verbindeZumClient() throws IOException {
 		oos = new ObjectOutputStream(clientSocket.getOutputStream());
 		ois = new ObjectInputStream(clientSocket.getInputStream());
-		System.out.println("[ClientHandler  " + clientHandlerId + "] Starte ClientHandler fuer: "
+		logger.fine("[ClientHandler  " + clientHandlerId + "] Starte ClientHandler fuer: "
 				+ clientSocket.getInetAddress() + ":->" + clientSocket.getPort());
 		socketAddress = clientSocket.getRemoteSocketAddress();
 		logger.fine("[ClientHandler" + clientHandlerId + "] Verbindung zu " + socketAddress + " hergestellt");
