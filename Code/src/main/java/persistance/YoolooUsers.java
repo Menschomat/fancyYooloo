@@ -1,12 +1,10 @@
 package persistance;
 
-import com.sun.istack.internal.NotNull;
 import common.YoolooKarte;
 import common.YoolooSpieler;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class YoolooUsers implements Serializable {

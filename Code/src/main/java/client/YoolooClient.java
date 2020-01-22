@@ -274,4 +274,8 @@ public class YoolooClient {
         return fancySortierung;
     }
 
+    protected void setSpieler(YoolooKarte[] yoolooKartes){
+        meinSpieler = new YoolooSpieler("TestSpieler", 10);
+        meinSpieler.setAktuelleSortierung(yoolooKartes);
+    }
 }
