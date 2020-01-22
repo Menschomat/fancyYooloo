@@ -43,7 +43,7 @@ public class YoolooSession {
             if ((spielplan[spielerID][i] != null) && (spielplan[spielerID][i].getWert() == karte.getWert())) {
                 System.out.println("Spieler [ID: " + spielerID +  "] hat die Regeln nicht eingehalten, Runde wird abgebrochen!");
                 if (server != null) {
-                    server.shutDownServer(543210);
+                    server.kickeAlleSpieler();
                 }
                 return false;
             }

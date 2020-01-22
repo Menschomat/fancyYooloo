@@ -206,4 +206,8 @@ public class YoolooServer {
     public void setServerGameMode(GameMode serverGameMode) {
         this.serverGameMode = serverGameMode;
     }
+
+    public void kickeAlleSpieler() {
+        clientHandlerList.forEach((n) -> n.kickClient());
+    }
 }
