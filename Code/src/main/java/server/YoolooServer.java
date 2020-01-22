@@ -63,6 +63,10 @@ public class YoolooServer {
         this.waitForPlayers = waitForPlayers;
     }
 
+    public YoolooServer() {
+
+    }
+
     private void printBanner() {
         try (BufferedReader br = new BufferedReader(new FileReader(new File(
                 getClass().getClassLoader().getResource("banner.txt").getFile()
@@ -113,11 +117,13 @@ public class YoolooServer {
                     clientHandlerList = new ArrayList<YoolooClientHandler>();
                     botSpawnerRunning = false;
                 }
+                if (Thread.currentThread().isInterrupted()) {
+                    shutDownServer(543210);
+                }
             }
-        } catch (IOException e1) {
+        } catch (IOException e) {
             logger.severe("ServerSocket nicht gebunden");
             serverAktiv = false;
-            e1.printStackTrace();
         }
 
     }
@@ -149,7 +155,7 @@ public class YoolooServer {
                             for (int i = 0; i < target; i++) {
                                 logger.info("SPAWNING BOT" + i);
                                 spielerPool.execute(() -> new YoolooClient().startClient());
-                                Thread.sleep(200);
+                                Thread.sleep(100);
                             }
                             Thread.currentThread().interrupt();
                             return;
@@ -181,6 +187,11 @@ public class YoolooServer {
         if (code == 543210) {
             this.serverAktiv = false;
             logger.fine("Server wird beendet");
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             spielerPool.shutdown();
         } else {
             logger.warning("Servercode falsch");
