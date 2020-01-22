@@ -29,10 +29,11 @@ import messages.ServerMessage.ServerMessageResult;
 import messages.ServerMessage.ServerMessageType;
 import persistance.YoolooFileWriter;
 import persistance.YoolooUsers;
+import utils.PropertiesController;
 
 public class YoolooClientHandler extends Thread {
 
-	Logger logger = Logger.getLogger(getClass().getName());
+	Logger logger = PropertiesController.getLogger(getClass().getName());
 
 	private final static int delay = 100;
 
@@ -49,14 +50,11 @@ public class YoolooClientHandler extends Thread {
 	private YoolooSpieler meinSpieler = null;
 	private int clientHandlerId;
 
-	private ArrayList<YoolooKarte> gespielteKarten;
-
 	public YoolooClientHandler(YoolooServer yoolooServer, Socket clientSocket) {
 		this.myServer = yoolooServer;
 		myServer.toString();
 		this.clientSocket = clientSocket;
 		this.state = ServerState.ServerState_NULL;
-		this.gespielteKarten = new ArrayList<>();
 
 	}
 
@@ -164,7 +162,7 @@ public class YoolooClientHandler extends Thread {
 			System.err.println(e);
 			e.printStackTrace();
 		} finally {
-			System.out.println("[ClientHandler" + clientHandlerId + "] Verbindung zu " + socketAddress + " beendet");
+			logger.fine("[ClientHandler" + clientHandlerId + "] Verbindung zu " + socketAddress + " beendet");
 		}
 
 	}
@@ -187,7 +185,7 @@ public class YoolooClientHandler extends Thread {
 	private void verbindeZumClient() throws IOException {
 		oos = new ObjectOutputStream(clientSocket.getOutputStream());
 		ois = new ObjectInputStream(clientSocket.getInputStream());
-		System.out.println("[ClientHandler  " + clientHandlerId + "] Starte ClientHandler fuer: "
+		logger.fine("[ClientHandler  " + clientHandlerId + "] Starte ClientHandler fuer: "
 				+ clientSocket.getInetAddress() + ":->" + clientSocket.getPort());
 		socketAddress = clientSocket.getRemoteSocketAddress();
 		logger.fine("[ClientHandler" + clientHandlerId + "] Verbindung zu " + socketAddress + " hergestellt");
@@ -232,13 +230,6 @@ public class YoolooClientHandler extends Thread {
 		YoolooStich aktuellerStich = null;
 		logger.fine("[ClientHandler" + clientHandlerId + "] spiele Stich Nr: " + stichNummer
 				+ " KarteKarte empfangen: " + empfangeneKarte.toString());
-		if (!this.gespielteKarten.contains(empfangeneKarte)) {
-			logger.fine("[ClientHandler" + clientHandlerId + "] Anti-Cheat Prüfung: OK!");
-		} else {
-			logger.fine("[ClientHandler" + clientHandlerId + "] Anti-Cheat Prüfung: Cheat erkannt!");
-			myServer.shutDownServer(543210);
-		}
-		gespielteKarten.add(empfangeneKarte);
 		session.spieleKarteAus(clientHandlerId, stichNummer, empfangeneKarte);
 		// ausgabeSpielplan(); // Fuer Debuginformationen sinnvoll
 		while (aktuellerStich == null) {
@@ -280,6 +271,17 @@ public class YoolooClientHandler extends Thread {
 		logger.fine("[ClientHandler" + clientHandlerId + "] joinSession " + session.toString());
 		this.session = session;
 
+	}
+
+	/**
+	 * kickt den Client vom Server (Regeleinhaltung)
+	 */
+	public void kickClient() {
+		try {
+			sendeKommando(ServerMessageType.SERVERMESSAGE_CHANGE_STATE, ClientState.CLIENTSTATE_DISCONNECT, ServerMessageResult.SERVER_MESSAGE_RESULT_OK);
+		} catch (IOException exception) {
+
+		}
 	}
 
 }

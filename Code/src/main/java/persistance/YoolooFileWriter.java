@@ -1,5 +1,7 @@
 package persistance;
 
+import utils.PropertiesController;
+
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -8,7 +10,7 @@ public class YoolooFileWriter {
 
     private final String filePath = "users.data";
 
-    Logger logger = Logger.getLogger(getClass().getName());
+    Logger logger = PropertiesController.getLogger(getClass().getName());
 
 
     public YoolooFileWriter() {

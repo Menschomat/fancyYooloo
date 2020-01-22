@@ -2,6 +2,7 @@ package persistance;
 
 import common.YoolooKarte;
 import common.YoolooSpieler;
+import utils.PropertiesController;
 
 import java.io.Serializable;
 import java.util.*;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class YoolooUsers implements Serializable {
 
-    Logger logger = Logger.getLogger(getClass().getName());
+    Logger logger = PropertiesController.getLogger(getClass().getName());
 
     private YoolooFileWriter fileWriter = new YoolooFileWriter();
 

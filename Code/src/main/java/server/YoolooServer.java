@@ -7,6 +7,7 @@ package server;
 import client.YoolooClient;
 import common.YoolooKartenspiel;
 import persistance.YoolooUsers;
+import utils.PropertiesController;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,7 +32,7 @@ public class YoolooServer {
     private boolean botSpawnerRunning = false;
     private GameMode serverGameMode = GameMode.GAMEMODE_SINGLE_GAME;
     private YoolooUsers users = new YoolooUsers();
-    private Logger logger = Logger.getLogger("YoolooServer");
+    private Logger logger = PropertiesController.getLogger("YoolooServer");
     private ServerSocket serverSocket = null;
     private boolean serverAktiv = true;
 
@@ -103,7 +104,7 @@ public class YoolooServer {
                 // Neue Session starten wenn ausreichend Spieler verbunden sind!
                 if (clientHandlerList.size() >= Math.min(spielerProRunde, YoolooKartenspiel.Kartenfarbe.values().length)) {
                     // Init Session
-                    YoolooSession yoolooSession = new YoolooSession(clientHandlerList.size(), serverGameMode);
+                    YoolooSession yoolooSession = new YoolooSession(clientHandlerList.size(), serverGameMode, this);
 
                     // Starte pro Client einen ClientHandlerTread
                     for (int i = 0; i < clientHandlerList.size(); i++) {
@@ -216,5 +217,9 @@ public class YoolooServer {
 
     public void setServerGameMode(GameMode serverGameMode) {
         this.serverGameMode = serverGameMode;
+    }
+
+    public void kickeAlleSpieler() {
+        clientHandlerList.forEach((n) -> n.kickClient());
     }
 }
