@@ -14,6 +14,10 @@ namespace allgemein {
   }
 }
 
+allgemein.StarterClient -- client.YoolooClient
+allgemein.StarterServer -- server.YoolooServer
+allgemein.Starter -- common.YoolooKartenspiel
+
 namespace client {
   enum ClientState {
     + CLIENTSTATE_NULL
@@ -28,7 +32,7 @@ namespace client {
   }
 
   class YoolooClient {
-    - serverHostname: string
+    - serverHostname: String
     - serverPort: int
     - serverSocket: Socket
     - ois: ObjectInputStream
@@ -55,6 +59,11 @@ namespace client {
     - fancySortierung(): YoolooKarte[]
   }
 }
+
+client.YoolooClient "1" *-- "1" client.ClientState
+client.YoolooClient "1" *-- "1" common.LoginMessage
+client.YoolooClient "1" *-- "1" common.YoolooSpieler
+client.YoolooClient "1" *-- "0..*" common.YoolooStich
 
 namespace common {
   class LoginMessage {
@@ -153,6 +162,14 @@ namespace common {
     + toString(): String
   }
 }
+
+common.LoginMessage "1" *-- "1" server.GameMode
+common.YoolooKarte "1" *-- "1" common.Kartenfarbe
+common.YoolooKartenspiel "1" *-- "0..*" common.YoolooKarte
+common.YoolooKartenspiel "1" *-- "0..*" common.YoolooSpieler
+common.YoolooSpieler "1" *-- "1" common.Kartenfarbe
+common.YoolooSpieler "1" *-- "0..*" common.YoolooKarte
+common.YoolooStich "1" #-- "0..*" common.YoolooKarte
 
 namespace messages {
   enum ClientMessageType {
@@ -263,27 +280,71 @@ namespace server {
     - sendeKommando(serverMessageType: ServerMessageType, clientState: ClientState, serverMessageResult: ServerMessageResult, paramInt: int): void
     - sendeKommando(serverMessageType: ServerMessageType, clientState: ClientState, serverMessageResult: ServerMessageResult): void
     - verbindeZumClient(): void
+    - empfangeVomClient(): Object
+    - playerAlreadyInSession(playerName: String): boolean
+    - registriereSpielerInSession(meinSpieler: YoolooSpieler): void
+    - spieleKarte(stichNummer: int, empfangeneKarte: YoolooKarte): YoolooStich
+    + setHandlerID(clientHandlerId): void
+    + ausgabeSpielplan(): void
+    + joinSession(session: YoolooSession): void
+  }
+
+  enum GameMode {
+    GAMEMODE_NULL
+    GAMEMODE_SINGLE_GAME
+    GAMEMODE_PLAY_ROUND_GAME
+    GAMEMODE_PLAY_LIGA
+    GAMEMODE_PLAY_POKAL
+    GAMEMODE_PLAY_POKAL_LL
   }
 
   class YoolooSession {
-    + test
+    - port: int
+    - spielerProRunde: int
+    - minRealPlayers: int
+    - waitForPlayers: int
+    - botSpawnerRunning: boolean
+    - serverGameMode: GameMode
+    - users: YoolooUsers
+    - logger: Logger
+    - serverSocket: ServerSocket
+    - serverAktiv: boolean
+    - clientHandlerList: ArrayList<YoolooClientHandler>
+    - spielerPool: ExecutorService
+    + YoolooServer(port: int, spielerProRunde: int, minRealPlayers: int, waitForPlayers: int, gameMode GameMode)
+    + startServer(): void
+    + shutDownServer(code: int): void
+    + getUsers(): YoolooUsers
+    + getClientCount(): int
+    + getSpielerProRunde(): int
+    + getServerGameMode(): GameMode
+    + setServerGameMode(serverGameMode: GameMode)
+    - printBanner(): void
+    - spawnBots(): void
+    - botSpawnCriteriaOk(startedSearchTime: long): boolean
+    - clientSpawnTimeExceeded(startedSearch: long): boolean
   }
 
   class YoolooClientHandler {
-    + test
+    - anzahlSpielerInRunde: int
+    - gameMode: GameMode
+    - spielplan: YoolooKarte[][]
+    - aktuellesSpiel: YoolooKartenspiel
+    - ausgewerteteStiche: YoolooStich[] ausgewerteteStiche
+    + YoolooSession(anzahlSpielerInRunde: int)
+    + YoolooSession(anzahlSpielerInRunde: int, gamemode: GameMode)
+    + spieleKarteAus(stichNummer: int, spielerID: int, karte: YoolooKarte)
+    + stichFuerRundeAuswerten(stichNummer: int): YoolooStich
+    + getAktuellesSpiel(): YoolooKartenspiel
+    + setAktuellesSpiel(aktuellesSpiel: YoolooKarte): void
+    + getAnzahlSpielerInRunde(): int
+    + setAnzahlSpielerInRunde(anzahlSpielerInRunde: int): void
+    + getGamemode(): GameMode
+    + setGamemode(gamemode: GameMode): void
+    + getSpielplan(): YoolooKarte[][]
+    + setSpielplan(spielplan: YoolooKarte[][]): void
+    + getErgebnis(): String
   }
 }
-
-class Car {
-  color
-  model
-  +start()
-  #run()
-  #stop()
-}
-Car <|- Bus
-Car *-down- Tire
-Car *-down- Engine
-Bus o-down- Driver
 
 @enduml
