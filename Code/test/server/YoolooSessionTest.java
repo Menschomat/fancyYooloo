@@ -12,6 +12,7 @@ public class YoolooSessionTest {
         YoolooSession session = new YoolooSession(1, YoolooServer.GameMode.GAMEMODE_NULL, null);
 
         session.spieleKarteAus(0, 0, new YoolooKarte(YoolooKartenspiel.Kartenfarbe.Blau, 1));
+        session.stichFuerRundeAuswerten(0);
         assertEquals(session.spieleKarteAus(1, 0, new YoolooKarte(YoolooKartenspiel.Kartenfarbe.Blau, 1)), false);
     }
 }
