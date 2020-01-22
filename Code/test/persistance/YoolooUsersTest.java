@@ -55,37 +55,5 @@ class YoolooUsersTest {
         assertEquals(ref[0].getFarbe(), users.getUserCardOrder(spieler)[0].getFarbe());
     }
 
-    @Test
-    void userAlreadyInSessionTest() throws InterruptedException, ExecutionException {
-        YoolooServer server = new YoolooServer(44137, 2, 2, 0, YoolooServer.GameMode.GAMEMODE_SINGLE_GAME);
-        YoolooClient client1 = new YoolooClient();
-        client1.setName("test");
-        YoolooClient client2 = new YoolooClient();
-        client2.setName("test");
-        final ExecutorService service = Executors.newFixedThreadPool(22);
-
-        service.execute(() -> server.startServer());
-        final Future<Integer> result = service.submit(() -> maxClientWatcher(3000, server));
-        service.execute(() -> client1.startClient());
-        service.execute(() -> client2.startClient());
-        while (!result.isDone()) {
-            Thread.sleep(300);
-        }
-        service.shutdownNow();
-        assertEquals(1, result.get());
-    }
-
-    private int maxClientWatcher(long mils, YoolooServer server) {
-        System.out.println(server);
-        long start_mils = System.currentTimeMillis();
-        while (System.currentTimeMillis() - start_mils < mils) {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        return server.getClientCount();
-    }
 
 }
