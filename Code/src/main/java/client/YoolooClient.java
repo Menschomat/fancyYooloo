@@ -4,18 +4,19 @@
 
 package client;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
+import com.google.gson.Gson;
 import common.*;
+import helper.StatList;
 import messages.ClientMessage;
 import messages.ClientMessage.ClientMessageType;
 import messages.ServerMessage;
@@ -35,6 +36,7 @@ public class YoolooClient {
     private LoginMessage newLogin = null;
     private YoolooSpieler meinSpieler;
     private YoolooStich[] spielVerlauf = null;
+    private Gson gson = new Gson();
 
     private boolean nameCheck = false;
 
@@ -176,6 +178,9 @@ public class YoolooClient {
             System.out.print(
                     "[id-" + meinSpieler.getClientHandlerId() + "]ClientStatus: " + clientState + "] : Gewonnen - ");
             meinSpieler.erhaeltPunkte(iStich.getStichNummer() + 1);
+           // updateStats(true, stichNummer, meinSpieler.getAktuelleSortierung()[stichNummer].getWert());TODO wieder einkommentieren wenn es benutzt werden soll
+        } else {
+           // updateStats(false, stichNummer, meinSpieler.getAktuelleSortierung()[stichNummer].getWert());TODO wieder einkommentieren wenn es benutzt werden soll
         }
 
     }
@@ -270,21 +275,21 @@ public class YoolooClient {
     }
 
     public YoolooKarte[] fancySortierung() {
+        Properties props = PropertiesController.getProperties("client");
         YoolooKarte[] fancySortierung = new YoolooKarte[this.meinSpieler.getAktuelleSortierung().length];
-        Random random = new Random();
-        int asdf = random.nextInt(2);
-        switch (asdf) {
-            case 0:
+        String spielweise = props.get("connection.server.hostname") != null ? (String )props.get("spielweise.nummer") : "0";
+        switch (spielweise) {
+            case "0":
                 fancySortierung = sortierungFestlegen();
                 logger.log(Level.INFO, "Karten wurden Random sortiert.");
                 break;
-            case 1:
+            case "1":
                 for (int i = 0; i < fancySortierung.length; i++) {
                     fancySortierung[i] = meinSpieler.getAktuelleSortierung()[i];
                 }
                 logger.log(Level.INFO, "Karten wurde von klein nach groß sortiert.");
                 break;
-            case 2:
+            case "2":
                 for (int i = 0; i < fancySortierung.length; i++) {
                     fancySortierung[i] = meinSpieler.getAktuelleSortierung()[meinSpieler.getAktuelleSortierung().length - 1 - i];
                 }
@@ -297,5 +302,20 @@ public class YoolooClient {
     public void setName(String spielerName) {
         this.spielerName = spielerName;
     }
+
+    public void updateStats(Boolean stichGewonnen, int stichnummer, int siegerKarte) {
+        String path = "Code/src/main/resources/stats.json";
+        try {
+            FileReader fileReader = new FileReader(path);
+            StatList statList = gson.fromJson(fileReader, StatList.class);
+            statList.updateStatList(stichGewonnen, stichnummer, siegerKarte);
+            FileWriter fileWriter = new FileWriter("Code/src/main/resources/stats.json");
+            String asdf = gson.toJson(statList);
+            //fileWriter.write(asdf);
+            System.out.println("asdf");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//TODO anzahlSpiele muss noch nach jedem spiel erhöht werden
 
 }
