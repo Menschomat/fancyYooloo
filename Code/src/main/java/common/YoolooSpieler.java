@@ -6,6 +6,7 @@ package common;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.List;
 
 import common.YoolooKartenspiel.Kartenfarbe;
 
@@ -17,6 +18,7 @@ public class YoolooSpieler implements Serializable {
     private int clientHandlerId = -1;
     private int punkte;
     private YoolooKarte[] aktuelleSortierung;
+    private List<YoolooKarte> letzteSortierung;
 
     public YoolooSpieler(String name, int maxKartenWert) {
         this.name = name;
@@ -90,6 +92,14 @@ public class YoolooSpieler implements Serializable {
 
     public void setAktuelleSortierung(YoolooKarte[] aktuelleSortierung) {
         this.aktuelleSortierung = aktuelleSortierung;
+    }
+
+    public List<YoolooKarte> getLetzteSortierung() {
+        return letzteSortierung;
+    }
+
+    public void setLetzteSortierung(List<YoolooKarte> letzteSortierung) {
+        this.letzteSortierung = letzteSortierung;
     }
 
     public void stichAuswerten(YoolooStich stich) {
