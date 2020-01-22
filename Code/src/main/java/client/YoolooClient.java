@@ -36,16 +36,19 @@ public class YoolooClient {
     private YoolooSpieler meinSpieler;
     private YoolooStich[] spielVerlauf = null;
 
+    private boolean nameCheck = false;
+
     Logger logger = PropertiesController.getLogger(YoolooClient.class.getName());
 
     public YoolooClient() {
         super();
     }
 
-    public YoolooClient(String serverHostname, int serverPort) {
+    public YoolooClient(String serverHostname, int serverPort, boolean nameCheck) {
         super();
         this.serverPort = serverPort;
         clientState = ClientState.CLIENTSTATE_NULL;
+        this.nameCheck = nameCheck;
     }
 
     /**
@@ -143,6 +146,22 @@ public class YoolooClient {
         // Kommunikationskanuele einrichten
         ois = new ObjectInputStream(serverSocket.getInputStream());
         oos = new ObjectOutputStream(serverSocket.getOutputStream());
+        if (nameCheck) {
+            try {
+                logger.fine("Spielerprüfung erfolgt. Übermittle Spielernamen");
+                oos.writeObject(this.spielerName);
+                ClientState answer = null;
+                while (answer == null) {
+                    answer = (ClientState) ois.readObject();
+                }
+                if (answer.equals(ClientState.CLIENTSTATE_DISCONNECTED)) {
+                    clientState = answer;
+                    logger.fine("Server hat Verbindung verweigert. Schließe Client.");
+                }
+            } catch (ClassNotFoundException e) {
+                logger.severe(e.getMessage());
+            }
+        }
     }
 
     private void spieleStich(int stichNummer) throws IOException {

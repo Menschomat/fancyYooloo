@@ -9,13 +9,13 @@ import common.YoolooKartenspiel;
 import persistance.YoolooUsers;
 import utils.PropertiesController;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -35,6 +35,7 @@ public class YoolooServer {
     private Logger logger = PropertiesController.getLogger("YoolooServer");
     private ServerSocket serverSocket = null;
     private boolean serverAktiv = true;
+    private boolean checkName = false;
 
     // private ArrayList<Thread> spielerThreads;
     private ArrayList<YoolooClientHandler> clientHandlerList = new ArrayList<>();
@@ -56,12 +57,13 @@ public class YoolooServer {
         GAMEMODE_PLAY_POKAL_LL // noch nicht genutzt: Spielmodus: KO System mit Lucky Looser
     }
 
-    public YoolooServer(int port, int spielerProRunde, int minRealPlayers, int waitForPlayers, GameMode gameMode) {
+    public YoolooServer(int port, int spielerProRunde, int minRealPlayers, int waitForPlayers, GameMode gameMode, boolean checkName) {
         this.port = port;
         this.spielerProRunde = spielerProRunde;
         this.serverGameMode = gameMode;
         this.minRealPlayers = minRealPlayers;
         this.waitForPlayers = waitForPlayers;
+        this.checkName = checkName;
     }
 
     public YoolooServer() {
@@ -88,17 +90,40 @@ public class YoolooServer {
             serverSocket = new ServerSocket(port);
             spielerPool = Executors.newCachedThreadPool();
             logger.fine("Server gestartet - warte auf Spieler");
+            Set<String> playerNames = new HashSet<>();
             while (serverAktiv) {
                 // Neue Spieler registrieren
                 if (!botSpawnerRunning)
                     spawnBots();
                 try {
                     Socket client = serverSocket.accept();
-                    YoolooClientHandler clientHandler = new YoolooClientHandler(this, client);
-                    clientHandlerList.add(clientHandler);
-                    logger.fine("[YoolooServer] Anzahl verbundene Spieler: " + clientHandlerList.size());
+                    boolean addClient = true;
+                    if (checkName) {
+                        logger.fine("Prüfe ob Spielername bereits verbunden");
+                        ObjectOutputStream dummy = new ObjectOutputStream(client.getOutputStream());
+                        ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
+                        String playerName = (String) ois.readObject();
+                        if (playerNames.contains(playerName)) {
+                            addClient = false;
+                            dummy.writeObject(YoolooClient.ClientState.CLIENTSTATE_DISCONNECTED);
+                            client.close();
+                            logger.warning("Spieler bereits verbunden. Breche Verbindungsversuch ab.");
+                        } else {
+                            playerNames.add(playerName);
+                            logger.fine("Spieler noch nicht verbunden. Füge Spieler hinzu.");
+                        }
+                    }
+
+                    if (addClient) {
+                        YoolooClientHandler clientHandler = new YoolooClientHandler(this, client);
+                        clientHandlerList.add(clientHandler);
+                        logger.fine("[YoolooServer] Anzahl verbundene Spieler: " + clientHandlerList.size());
+                    }
                 } catch (IOException e) {
                     logger.severe("Client Verbindung gescheitert");
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    logger.severe(e.getMessage());
                     e.printStackTrace();
                 }
                 // Neue Session starten wenn ausreichend Spieler verbunden sind!

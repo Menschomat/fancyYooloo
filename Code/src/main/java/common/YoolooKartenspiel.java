@@ -8,13 +8,15 @@ import utils.PropertiesController;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 
 public class YoolooKartenspiel {
 
     Logger logger = PropertiesController.getLogger(getClass().getName());
 
-    public boolean hasPlayer(String playerName) {
+    public synchronized boolean hasPlayer(String playerName) {
+        System.out.println(spielerliste.stream().map(YoolooSpieler::getName).collect(Collectors.joining()));
         return spielerliste.stream().map(YoolooSpieler::getName).anyMatch(s -> s.equals(playerName));
     }
 

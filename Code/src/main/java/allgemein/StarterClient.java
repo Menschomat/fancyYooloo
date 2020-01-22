@@ -20,7 +20,8 @@ public class StarterClient {
         // Starte Client
         String hostname = props.get("connection.server.hostname") != null ? props.get("connection.server.hostname").toString() : "localhost";
         int port = props.get("connection.server.port") != null ? Integer.parseInt(props.get("connection.server.port").toString()) : 44137;
-        YoolooClient client = new YoolooClient(hostname, port);
+        boolean nameCheck = props.get("game.nameCheck") != null ? props.get("game.nameCheck").toString().equals("true") : false;
+        YoolooClient client = new YoolooClient(hostname, port, nameCheck);
         client.startClient();
 
     }

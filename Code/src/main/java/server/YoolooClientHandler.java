@@ -98,7 +98,7 @@ public class YoolooClientHandler extends Thread {
 					if (antwortObject instanceof LoginMessage) {
 						LoginMessage newLogin = (LoginMessage) antwortObject;
 						if (playerAlreadyInSession(newLogin.getSpielerName())) {
-							logger.info("Spielername bereits in der Session, beende verbindung");
+							logger.info("Spielername bereits in der Session, beende Verbindung");
 							sendeKommando(ServerMessageType.SERVERMESSAGE_CHANGE_STATE, ClientState.CLIENTSTATE_DISCONNECTED,  null);
 							this.state = ServerState.ServerState_DISCONNECT;
 							break;
@@ -208,6 +208,7 @@ public class YoolooClientHandler extends Thread {
 	}
 
 	private boolean playerAlreadyInSession(String playerName) {
+		System.out.println(playerName);
 		return session.getAktuellesSpiel().hasPlayer(playerName);
 	}
 

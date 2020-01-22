@@ -15,10 +15,10 @@ public class DoubleUserNameCheckTest {
 
     @Test
     void userAlreadyInSessionTest() throws InterruptedException, ExecutionException {
-        YoolooServer server = new YoolooServer(44137, 2, 2, 100000, YoolooServer.GameMode.GAMEMODE_SINGLE_GAME);
-        YoolooClient client1 = new YoolooClient();
+        YoolooServer server = new YoolooServer(44137, 2, 2, 100000, YoolooServer.GameMode.GAMEMODE_SINGLE_GAME, true);
+        YoolooClient client1 = new YoolooClient("localhost",44137, true);
         client1.setName("test");
-        YoolooClient client2 = new YoolooClient();
+        YoolooClient client2 = new YoolooClient("localhost",44137, true);
         client2.setName("test");
         final ExecutorService service = Executors.newFixedThreadPool(3);
 

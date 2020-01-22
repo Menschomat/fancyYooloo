@@ -29,9 +29,10 @@ public class StarterServer {
         int numOfPlayers = props.get("game.size") != null ? Integer.parseInt(props.get("game.size").toString()) : 2; // min 1, max Anzahl definierte Farben in Enum YoolooKartenSpiel.KartenFarbe)
         int botWait = props.get("game.bot.wait") != null ? Integer.parseInt(props.get("game.bot.wait").toString()) : 30;
         int minPlayers = props.get("game.min.players") != null ? Integer.parseInt(props.get("game.min.players").toString()) : 0;
+        boolean nameCheck = props.get("game.nameCheck") != null ? props.get("game.nameCheck").toString().equals("true") : false;
 
 
-        YoolooServer server = new YoolooServer(listeningPort, numOfPlayers, minPlayers, botWait, GameMode.GAMEMODE_SINGLE_GAME);
+        YoolooServer server = new YoolooServer(listeningPort, numOfPlayers, minPlayers, botWait, GameMode.GAMEMODE_SINGLE_GAME, nameCheck);
         server.startServer();
     }
 
