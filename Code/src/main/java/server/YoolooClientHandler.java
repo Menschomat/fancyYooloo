@@ -29,10 +29,11 @@ import messages.ServerMessage.ServerMessageResult;
 import messages.ServerMessage.ServerMessageType;
 import persistance.YoolooFileWriter;
 import persistance.YoolooUsers;
+import utils.PropertiesController;
 
 public class YoolooClientHandler extends Thread {
 
-	Logger logger = Logger.getLogger(getClass().getName());
+	Logger logger = PropertiesController.getLogger(getClass().getName());
 
 	private final static int delay = 100;
 

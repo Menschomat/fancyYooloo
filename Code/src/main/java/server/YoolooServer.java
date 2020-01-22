@@ -7,6 +7,7 @@ package server;
 import client.YoolooClient;
 import common.YoolooKartenspiel;
 import persistance.YoolooUsers;
+import utils.PropertiesController;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,7 +32,7 @@ public class YoolooServer {
     private boolean botSpawnerRunning = false;
     private GameMode serverGameMode = GameMode.GAMEMODE_SINGLE_GAME;
     private YoolooUsers users = new YoolooUsers();
-    private Logger logger = Logger.getLogger("YoolooServer");
+    private Logger logger = PropertiesController.getLogger("YoolooServer");
     private ServerSocket serverSocket = null;
     private boolean serverAktiv = true;
 
@@ -61,6 +62,10 @@ public class YoolooServer {
         this.serverGameMode = gameMode;
         this.minRealPlayers = minRealPlayers;
         this.waitForPlayers = waitForPlayers;
+    }
+
+    public YoolooServer() {
+
     }
 
     private void printBanner() {
@@ -113,11 +118,13 @@ public class YoolooServer {
                     clientHandlerList = new ArrayList<YoolooClientHandler>();
                     botSpawnerRunning = false;
                 }
+                if (Thread.currentThread().isInterrupted()) {
+                    shutDownServer(543210);
+                }
             }
-        } catch (IOException e1) {
+        } catch (IOException e) {
             logger.severe("ServerSocket nicht gebunden");
             serverAktiv = false;
-            e1.printStackTrace();
         }
 
     }
@@ -149,7 +156,7 @@ public class YoolooServer {
                             for (int i = 0; i < target; i++) {
                                 logger.info("SPAWNING BOT" + i);
                                 spielerPool.execute(() -> new YoolooClient().startClient());
-                                Thread.sleep(200);
+                                Thread.sleep(100);
                             }
                             Thread.currentThread().interrupt();
                             return;
@@ -181,6 +188,11 @@ public class YoolooServer {
         if (code == 543210) {
             this.serverAktiv = false;
             logger.fine("Server wird beendet");
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             spielerPool.shutdown();
         } else {
             logger.warning("Servercode falsch");
