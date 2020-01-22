@@ -272,4 +272,15 @@ public class YoolooClientHandler extends Thread {
 
 	}
 
+	/**
+	 * kickt den Client vom Server (Regeleinhaltung)
+	 */
+	public void kickClient() {
+		try {
+			sendeKommando(ServerMessageType.SERVERMESSAGE_CHANGE_STATE, ClientState.CLIENTSTATE_DISCONNECT, ServerMessageResult.SERVER_MESSAGE_RESULT_OK);
+		} catch (IOException exception) {
+
+		}
+	}
+
 }
