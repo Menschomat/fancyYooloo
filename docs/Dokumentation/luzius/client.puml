@@ -1,0 +1,17 @@
+@startuml
+start
+while (ServerSocket nicht initialisiert)
+    :Baue ServerSocket auf;
+endwhile
+:Initialisiere Kommunikationskanäle;
+if (Namensprüfung aktiv) then (Ja)
+    :Übermittle Spielernamen;
+    while (Antwort null)
+        :empfange Antwort;
+    endwhile
+    if (Antwort == DISCONNECT) then (Ja)
+        :Setze Status auf DISCONNECT;
+    endif
+endif
+end
+@enduml
