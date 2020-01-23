@@ -15,11 +15,6 @@ public class YoolooKartenspiel {
 
     Logger logger = PropertiesController.getLogger(getClass().getName());
 
-    public synchronized boolean hasPlayer(String playerName) {
-        System.out.println(spielerliste.stream().map(YoolooSpieler::getName).collect(Collectors.joining()));
-        return spielerliste.stream().map(YoolooSpieler::getName).anyMatch(s -> s.equals(playerName));
-    }
-
     public enum Kartenfarbe {
         Gelb, Rot, Gruen, Blau, Orange, Pink, Violett, Tuerkis
     }

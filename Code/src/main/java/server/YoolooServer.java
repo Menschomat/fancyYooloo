@@ -100,12 +100,12 @@ public class YoolooServer {
                     boolean addClient = true;
                     if (checkName) {
                         logger.fine("Prüfe ob Spielername bereits verbunden");
-                        ObjectOutputStream dummy = new ObjectOutputStream(client.getOutputStream());
+                        ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
                         ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
                         String playerName = (String) ois.readObject();
                         if (playerNames.contains(playerName)) {
                             addClient = false;
-                            dummy.writeObject(YoolooClient.ClientState.CLIENTSTATE_DISCONNECTED);
+                            oos.writeObject(YoolooClient.ClientState.CLIENTSTATE_DISCONNECTED);
                             client.close();
                             logger.warning("Spieler bereits verbunden. Breche Verbindungsversuch ab.");
                         } else {
@@ -142,6 +142,7 @@ public class YoolooServer {
                     // nächste Runde eröffnen
                     clientHandlerList = new ArrayList<YoolooClientHandler>();
                     botSpawnerRunning = false;
+                    playerNames = new HashSet<>();
                 }
                 if (Thread.currentThread().isInterrupted()) {
                     shutDownServer(543210);
