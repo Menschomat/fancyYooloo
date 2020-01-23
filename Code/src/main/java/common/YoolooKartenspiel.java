@@ -4,17 +4,16 @@
 
 package common;
 
+import utils.PropertiesController;
+
 import java.util.ArrayList;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 
 public class YoolooKartenspiel {
 
-    Logger logger = Logger.getLogger(getClass().getName());
-
-    public boolean hasPlayer(String playerName) {
-        return spielerliste.stream().map(YoolooSpieler::getName).anyMatch(s -> s.equals(playerName));
-    }
+    Logger logger = PropertiesController.getLogger(getClass().getName());
 
     public enum Kartenfarbe {
         Gelb, Rot, Gruen, Blau, Orange, Pink, Violett, Tuerkis

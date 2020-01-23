@@ -75,7 +75,7 @@ public class YoolooSession {
 
     }
 
-    public YoolooKartenspiel getAktuellesSpiel() {
+    public synchronized YoolooKartenspiel getAktuellesSpiel() {
         return aktuellesSpiel;
     }
 
