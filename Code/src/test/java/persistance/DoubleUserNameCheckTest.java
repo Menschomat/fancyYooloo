@@ -1,9 +1,11 @@
 package persistance;
 
 import client.YoolooClient;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import server.YoolooServer;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,9 +18,9 @@ public class DoubleUserNameCheckTest {
     @Test
     void userAlreadyInSessionTest() throws InterruptedException, ExecutionException {
         YoolooServer server = new YoolooServer(44137, 2, 2, 100000, YoolooServer.GameMode.GAMEMODE_SINGLE_GAME, true);
-        YoolooClient client1 = new YoolooClient("localhost",44137, true);
+        YoolooClient client1 = new YoolooClient("localhost", 44137, true);
         client1.setName("test");
-        YoolooClient client2 = new YoolooClient("localhost",44137, true);
+        YoolooClient client2 = new YoolooClient("localhost", 44137, true);
         client2.setName("test");
         final ExecutorService service = Executors.newFixedThreadPool(3);
 
@@ -30,7 +32,14 @@ public class DoubleUserNameCheckTest {
         while (!result.isDone()) {
             Thread.sleep(300);
         }
-        service.shutdownNow();
+        try {
+            if(server != null){
+                server.shutDownServer(543210);
+            }
+            service.shutdownNow();
+        } catch (IOException e) {
+        }
+        Thread.sleep(4000);
         assertEquals(1, result.get());
     }
 
@@ -45,6 +54,6 @@ public class DoubleUserNameCheckTest {
             }
         }
         return server.getClientCount();
-    }
 
+    }
 }

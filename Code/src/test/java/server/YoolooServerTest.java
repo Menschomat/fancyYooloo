@@ -4,6 +4,7 @@ import client.YoolooClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,20 +31,26 @@ class YoolooServerTest {
          assertEquals(true, false);
      } */
     @Test
-    void clientConnectionTest() throws InterruptedException, ExecutionException {
+    void clientConnectionTest() throws InterruptedException, ExecutionException, IOException {
         YoolooServer server = new YoolooServer(44137, 2, 2, 0, YoolooServer.GameMode.GAMEMODE_SINGLE_GAME, false);
         YoolooClient client1 = new YoolooClient();
         YoolooClient client2 = new YoolooClient();
-        final ExecutorService service = Executors.newFixedThreadPool(22);
+        final ExecutorService service = Executors.newCachedThreadPool();
 
         service.execute(() -> server.startServer());
-        final Future<Integer> result = service.submit(() -> maxClientWatcher(3000, server));
+        final Future<Integer> result = service.submit(() -> maxClientWatcher(4000, server));
         service.execute(() -> client1.startClient());
         service.execute(() -> client2.startClient());
         while (!result.isDone()) {
             Thread.sleep(300);
         }
-        service.shutdownNow();
+        try {
+            if(server != null){
+                server.shutDownServer(543210);
+            }
+            service.shutdownNow();
+        } catch (IOException e) {
+        }
         assertEquals(2, result.get());
     }
 
@@ -56,7 +63,13 @@ class YoolooServerTest {
         while (!result.isDone()) {
             Thread.sleep(300);
         }
-        service.shutdownNow();
+        try {
+            if(server != null){
+                server.shutDownServer(543210);
+            }
+            service.shutdownNow();
+        } catch (IOException e) {
+        }
         assertEquals(4, result.get());
     }
 
@@ -78,6 +91,6 @@ class YoolooServerTest {
 
     @AfterEach
     void waitSomeTime() throws InterruptedException {
-        Thread.sleep(4000);
+        Thread.sleep(1000);
     }
 }

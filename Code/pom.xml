@@ -46,8 +46,9 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>client</id>
+                        <id>build-client</id>
                         <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
                             <archive>
                                 <manifest>
                                     <mainClass>allgemein.StarterClient</mainClass>
@@ -56,12 +57,17 @@
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
-                            <finalName>yoolooClient.jar</finalName>
+                            <finalName>${project.artifactId}-client</finalName>
                         </configuration>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
                     </execution>
                     <execution>
-                        <id>server</id>
+                        <id>build-server</id>
                         <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
                             <archive>
                                 <manifest>
                                     <mainClass>allgemein.StarterServer</mainClass>
@@ -70,8 +76,12 @@
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
-                            <finalName>yoolooServer.jar</finalName>
+                            <finalName>${project.artifactId}-server</finalName>
                         </configuration>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

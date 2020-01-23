@@ -30,10 +30,11 @@ class YoolooFileWriterTest {
     @org.junit.jupiter.api.Test
     void testFileWriter() {
         YoolooPersistance persistance = new YoolooPersistance();
-        persistance.getUsers().put("test", new ArrayList<>(Arrays.asList(1,2,3,4,5,6,7,8,9,10)));
+        persistance.getUsers().put("test", new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)));
         fileWriter.saveUsers(persistance);
         persistance = fileWriter.loadUsers();
         assertTrue(persistance.getUsers().containsKey("test"));
-        assertEquals(persistance.getUsers().get("test"), new ArrayList<>(Arrays.asList(1,2,3,4,5,6,7,8,9,10)));
+        assertEquals(persistance.getUsers().get("test"), new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)));
     }
+
 }

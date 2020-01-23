@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class YoolooClientTest {
-    static YoolooClient yoolooClient;
+  /* static YoolooClient yoolooClient;
 
     @BeforeAll
     static void createData(){
@@ -44,5 +44,5 @@ class YoolooClientTest {
             assertEquals(erwarteteSortierung[i].getWert(), sortierung[i].getWert());
             assertEquals(erwarteteSortierung[i].getFarbe(), sortierung[i].getFarbe());
         }
-    }
+    }*/
 }

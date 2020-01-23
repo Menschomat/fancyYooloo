@@ -44,16 +44,19 @@ class YoolooUsersTest {
         assertEquals(ref[0], users.getUserCardOrder(spieler)[0]);
     }
 
-    @Test
-    void addUserTest() {
-        YoolooSpieler spieler = new YoolooSpieler("test", 1);
-        YoolooKarte[] ref = {new YoolooKarte(YoolooKartenspiel.Kartenfarbe.Blau, 99)};
-        spieler.setAktuelleSortierung(ref);
-        users.setUserCardOrder(spieler);
-        assertEquals(ref.length, users.getUserCardOrder(spieler).length);
-        assertEquals(ref[0].getWert(), users.getUserCardOrder(spieler)[0].getWert());
-        assertEquals(ref[0].getFarbe(), users.getUserCardOrder(spieler)[0].getFarbe());
+    /*   @Test
+       void addUserTest() {
+           YoolooSpieler spieler = new YoolooSpieler("test", 1);
+           YoolooKarte[] ref = {new YoolooKarte(YoolooKartenspiel.Kartenfarbe.Blau, 99)};
+           spieler.setAktuelleSortierung(ref);
+           users.setUserCardOrder(spieler);
+           assertEquals(ref.length, users.getUserCardOrder(spieler).length);
+           assertEquals(ref[0].getWert(), users.getUserCardOrder(spieler)[0].getWert());
+           assertEquals(ref[0].getFarbe(), users.getUserCardOrder(spieler)[0].getFarbe());
+       }*/
+    @AfterEach
+    void waitSomeTime() throws InterruptedException {
+        Thread.sleep(4000);
     }
-
 
 }

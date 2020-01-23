@@ -12,7 +12,7 @@ public abstract class PropertiesController {
     private static final Properties properties = new Properties();
 
     public static Properties getProperties(String name) {
-        String path = "./" + name + ".properties";
+        String path = name + ".properties";
         try {
             InputStream fis = new FileInputStream(path);
             properties.load(fis);
