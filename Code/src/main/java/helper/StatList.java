@@ -24,22 +24,30 @@ public class StatList {
         this.statList = statList;
     }
 
-    public void updateStatList(Boolean stichGewonnen, int stichnummer, int siegerKarte) {
+    public void updateStatList(Boolean stichGewonnen, int stichnummer, int gespieltekarte) {
         for (Stat stat : this.statList) {
             if (Integer.valueOf(stat.stichNummer).equals(stichnummer + 1)) {
                 for (Stat.WinRates winRates : stat.winRates) {
                     double asdf = 100.00 / anzahlSpiele;
                     if (stichGewonnen) {
-                        if (siegerKarte == winRates.kartenWert) {
-                            winRates.winrate += asdf;
+                        if (gespieltekarte == winRates.kartenWert) {
+                            if (winRates.winrate != 100.00) {
+                                winRates.winrate += asdf;
+                            }
                         } else {
-                            winRates.winrate -= asdf;
+                            if (winRates.winrate != 0.00) {
+                                winRates.winrate -= asdf;
+                            }
                         }
                     } else {
-                        if (siegerKarte == winRates.kartenWert) {
-                            winRates.winrate -= asdf;
+                        if (gespieltekarte == winRates.kartenWert) {
+                            if (winRates.winrate != 0.00) {
+                                winRates.winrate -= asdf;
+                            }
                         } else {
-                            winRates.winrate += asdf;
+                            if (winRates.winrate != 100.00) {
+                                winRates.winrate += asdf;
+                            }
                         }
                     }
                 }
