@@ -161,7 +161,6 @@ public class YoolooServer {
                             Thread.currentThread().interrupt();
                             return;
                         }
-
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
