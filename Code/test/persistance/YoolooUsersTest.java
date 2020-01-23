@@ -1,15 +1,21 @@
 package persistance;
 
+import client.YoolooClient;
 import common.YoolooKarte;
 import common.YoolooKartenspiel;
 import common.YoolooSpieler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import server.YoolooServer;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,7 +37,7 @@ class YoolooUsersTest {
     }
 
     @Test
-    void userNotExistantTest() {
+    void testUserNotExistantTest() {
         YoolooSpieler spieler = new YoolooSpieler("test", 10);
         YoolooKarte[] ref = new YoolooKarte[10];
         assertEquals(ref.length, users.getUserCardOrder(spieler).length);
@@ -48,5 +54,6 @@ class YoolooUsersTest {
         assertEquals(ref[0].getWert(), users.getUserCardOrder(spieler)[0].getWert());
         assertEquals(ref[0].getFarbe(), users.getUserCardOrder(spieler)[0].getFarbe());
     }
+
 
 }

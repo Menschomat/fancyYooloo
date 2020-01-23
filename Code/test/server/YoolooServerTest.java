@@ -31,7 +31,7 @@ class YoolooServerTest {
      } */
     @Test
     void clientConnectionTest() throws InterruptedException, ExecutionException {
-        YoolooServer server = new YoolooServer(44137, 2, 2, 0, YoolooServer.GameMode.GAMEMODE_SINGLE_GAME);
+        YoolooServer server = new YoolooServer(44137, 2, 2, 0, YoolooServer.GameMode.GAMEMODE_SINGLE_GAME, false);
         YoolooClient client1 = new YoolooClient();
         YoolooClient client2 = new YoolooClient();
         final ExecutorService service = Executors.newFixedThreadPool(22);
@@ -49,7 +49,7 @@ class YoolooServerTest {
 
     @Test
     void botSpawnTest() throws InterruptedException, ExecutionException {
-        YoolooServer server = new YoolooServer(44137, 4, 0, 0, YoolooServer.GameMode.GAMEMODE_SINGLE_GAME);
+        YoolooServer server = new YoolooServer(44137, 4, 0, 0, YoolooServer.GameMode.GAMEMODE_SINGLE_GAME, false);
         final ExecutorService service = Executors.newFixedThreadPool(22);
         service.execute(() -> server.startServer());
         final Future<Integer> result = service.submit(() -> maxClientWatcher(1500, server));

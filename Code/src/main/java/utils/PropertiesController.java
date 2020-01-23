@@ -31,9 +31,12 @@ public abstract class PropertiesController {
         Properties properties = getProperties("logging");
         Level level = Level.parse(properties.getProperty(".level"));
         logger.setLevel(level);
-        Handler handler = new ConsoleHandler();
-        handler.setLevel(level);
-        logger.addHandler(handler);
+        Handler[] handlers = logger.getHandlers();
+        if (handlers.length == 0) {
+            Handler handler = new ConsoleHandler();
+            handler.setLevel(level);
+            logger.addHandler(handler);
+        }
         return logger;
     }
 }
