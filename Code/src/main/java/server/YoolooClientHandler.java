@@ -200,10 +200,6 @@ public class YoolooClientHandler extends Thread {
 		return null;
 	}
 
-	private boolean playerAlreadyInSession(String playerName) {
-		return session.getAktuellesSpiel().hasPlayer(playerName);
-	}
-
 	private void registriereSpielerInSession(YoolooSpieler meinSpieler) {
 		logger.fine("[ClientHandler" + clientHandlerId + "] registriereSpielerInSession " + meinSpieler.getName());
 		session.getAktuellesSpiel().spielerRegistrieren(meinSpieler);

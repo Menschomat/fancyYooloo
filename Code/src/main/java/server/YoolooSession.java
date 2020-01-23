@@ -39,19 +39,30 @@ public class YoolooSession {
     }
 
     public synchronized boolean spieleKarteAus(int stichNummer, int spielerID, YoolooKarte karte) {
-        for (int i = 0; i < spielplan[spielerID].length; i++) {
-            if ((spielplan[spielerID][i] != null) && (spielplan[spielerID][i].getWert() == karte.getWert())) {
-                System.out.println("Spieler [ID: " + spielerID +  "] hat die Regeln nicht eingehalten, Runde wird abgebrochen!");
-                if (server != null) {
-                    server.kickeAlleSpieler();
+        boolean ruleBroken = false;
+
+        if (spielplan[spielerID][0] != null) {
+            ruleBroken = spielplan[spielerID][0].getFarbe() != karte.getFarbe();
+        }
+
+        if (!ruleBroken) {
+            for (int i = 0; i < spielplan[spielerID].length; i++) {
+                if ((spielplan[spielerID][i] != null) && (spielplan[spielerID][i].getWert() == karte.getWert())) {
+                    ruleBroken = true;
                 }
-                return false;
+            }
+        }
+
+        if (ruleBroken) {
+            System.out.println("Spieler [ID: " + spielerID +  "] hat die Regeln nicht eingehalten, Runde wird abgebrochen!");
+            if (server != null) {
+                server.kickeAlleSpieler();
             }
         }
 
         spielplan[spielerID][stichNummer] = karte;
 
-        return true;
+        return !ruleBroken;
     }
 
     public synchronized YoolooStich stichFuerRundeAuswerten(int stichNummer) {
