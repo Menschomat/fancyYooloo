@@ -277,7 +277,7 @@ public class YoolooClient {
     public YoolooKarte[] fancySortierung() {
         Properties props = PropertiesController.getProperties("client");
         YoolooKarte[] fancySortierung = new YoolooKarte[this.meinSpieler.getAktuelleSortierung().length];
-        String spielweise = props.get("connection.server.hostname") != null ? (String )props.get("spielweise.nummer") : "0";
+        String spielweise = props.get("connection.server.hostname") != null ? (String )props.get("game.play.mode") : "0";
         switch (spielweise) {
             case "0":
                 fancySortierung = sortierungFestlegen();
