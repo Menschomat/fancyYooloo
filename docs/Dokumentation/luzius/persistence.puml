@@ -1,0 +1,27 @@
+@startuml
+class YoolooUsers {
+- fileWriter: YoolooFileWriter
+- persistence: YoolooPersistance
++ setUserCardOrder(meinSpieler: YoolooSpieler): void
++ getUserCardOrder(meinSpieler: YoolooSpieler): YoolooKarte[]
+- valuesAreValid(): boolean
+}
+
+class YoolooFileWriter {
+- filePath: String
+- logger: Logger
++ saveUsers(users: YoolooPersistance): void
++ loadUsers(): YoolooPersistance
+}
+
+class YoolooPersistance {
+- users: Map<String, List<Integer>>
++ getUsers(): Map<String, List<Integer>>
++ setUsers(users: Map<String, List<Integer>>): void
++ toString(): String
+}
+
+YoolooUsers --- "1" YoolooPersistance
+YoolooFileWriter - YoolooPersistance
+YoolooUsers --- "1" YoolooFileWriter
+@enduml

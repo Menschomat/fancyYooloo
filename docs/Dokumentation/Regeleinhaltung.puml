@@ -1,0 +1,21 @@
+@startuml
+
+|Client|
+start
+:sendet Karte (blaue 1);
+|#AntiqueWhite|Server|
+:prüft Farbe der Karte;
+:prüft Kartenwerte auf Duplikate;
+:speichert Karte für zukünftige Prüfungen;
+:wertet Stich aus;
+|Client|
+:sendet Karte (blaue 1);
+|Server|
+:prüft Farbe der Karte;
+:prüft Kartenwerte auf Duplikate;
+:sendet Abbruch des Spiels zu Client;
+|Client|
+:Client wird beendet;
+stop
+
+@enduml

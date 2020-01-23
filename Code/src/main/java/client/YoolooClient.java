@@ -92,7 +92,7 @@ public class YoolooClient {
                         break;
                     case SERVERMESSAGE_SORT_CARD_SET:
                         // sortieren Karten
-                        meinSpieler.setAktuelleSortierung(fancySortierung());
+                        meinSpieler.setAktuelleSortierung(fancySortierung("client"));
                         ausgabeKartenSet();
                         // ggfs. Spielverlauf löschen
                         spielVerlauf = new YoolooStich[YoolooKartenspiel.maxKartenWert];
@@ -274,10 +274,10 @@ public class YoolooClient {
         return neueSortierung;
     }
 
-    public YoolooKarte[] fancySortierung() {
-        Properties props = PropertiesController.getProperties("client");
+    public YoolooKarte[] fancySortierung(String property) {
+        Properties props = PropertiesController.getProperties(property);
         YoolooKarte[] fancySortierung = new YoolooKarte[this.meinSpieler.getAktuelleSortierung().length];
-        String spielweise = props.get("connection.server.hostname") != null ? (String )props.get("game.play.mode") : "0";
+        String spielweise = props.get("game.play.mode") != null ? (String) props.get("game.play.mode") : "0";
         switch (spielweise) {
             case "0":
                 fancySortierung = sortierungFestlegen();
@@ -304,18 +304,27 @@ public class YoolooClient {
     }
 
     public void updateStats(Boolean stichGewonnen, int stichnummer, int siegerKarte) {
-        String path = "Code/src/main/resources/stats.json";
+        Properties props = PropertiesController.getProperties("client");
+        String path = (String) props.get("stats.path");
         try {
             FileReader fileReader = new FileReader(path);
             StatList statList = gson.fromJson(fileReader, StatList.class);
             statList.updateStatList(stichGewonnen, stichnummer, siegerKarte);
-            FileWriter fileWriter = new FileWriter("Code/src/main/resources/stats.json");
-            String asdf = gson.toJson(statList);
-            //fileWriter.write(asdf);
-            System.out.println("asdf");
+            FileWriter fileWriter = new FileWriter(path);
+            String json = gson.toJson(statList);
+            //fileWriter.write(json);
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }//TODO anzahlSpiele muss noch nach jedem spiel erhöht werden
+    }
+
+    protected void createSpieler (){
+        meinSpieler = new YoolooSpieler("TestSpieler", 10);
+        YoolooKarte[] yoolooKartes = new YoolooKarte[10];
+        for(int i = 0; i < 10; i++){
+            yoolooKartes[i] = new YoolooKarte(YoolooKartenspiel.Kartenfarbe.Rot, i + 1);
+        }
+        meinSpieler.setAktuelleSortierung(yoolooKartes);
+    }
 
 }
