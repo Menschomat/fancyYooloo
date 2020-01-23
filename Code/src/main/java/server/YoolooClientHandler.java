@@ -50,6 +50,8 @@ public class YoolooClientHandler extends Thread {
 	private YoolooSpieler meinSpieler = null;
 	private int clientHandlerId;
 
+	private boolean kicked = false;
+
 	public YoolooClientHandler(YoolooServer yoolooServer, Socket clientSocket) {
 		this.myServer = yoolooServer;
 		myServer.toString();
@@ -221,7 +223,7 @@ public class YoolooClientHandler extends Thread {
 				+ " KarteKarte empfangen: " + empfangeneKarte.toString());
 		session.spieleKarteAus(clientHandlerId, stichNummer, empfangeneKarte);
 		// ausgabeSpielplan(); // Fuer Debuginformationen sinnvoll
-		while (aktuellerStich == null) {
+		while ((aktuellerStich == null) && (state != ServerState.ServerState_DISCONNECT)) {
 			try {
 				logger.fine("[ClientHandler" + clientHandlerId + "] warte " + delay + " ms ");
 				Thread.sleep(delay);
@@ -268,9 +270,9 @@ public class YoolooClientHandler extends Thread {
 	public void kickClient() {
 		try {
 			sendeKommando(ServerMessageType.SERVERMESSAGE_CHANGE_STATE, ClientState.CLIENTSTATE_DISCONNECT, ServerMessageResult.SERVER_MESSAGE_RESULT_OK);
+			this.state = ServerState.ServerState_DISCONNECT;
 		} catch (IOException exception) {
 
 		}
 	}
-
 }

@@ -210,7 +210,7 @@ public class YoolooServer {
 
 
     // TODO Dummy zur Serverterminierung noch nicht funktional
-    public void shutDownServer(int code) {
+    public void shutDownServer(int code) throws IOException {
         if (code == 543210) {
             this.serverAktiv = false;
             logger.fine("Server wird beendet");
