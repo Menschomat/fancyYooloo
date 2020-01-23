@@ -205,7 +205,7 @@ public class YoolooClientHandler extends Thread {
 		}
 		return null;
 	}
-
+ 
 	private boolean playerAlreadyInSession(String playerName) {
 		return session.getAktuellesSpiel().hasPlayer(playerName);
 	}
