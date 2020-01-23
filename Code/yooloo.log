@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2020-01-23T11:18:06</date>
+  <millis>1579774686328</millis>
+  <sequence>0</sequence>
+  <logger>persistance.YoolooFileWriter</logger>
+  <level>FINE</level>
+  <class>persistance.YoolooFileWriter</class>
+  <method>saveUsers</method>
+  <thread>1</thread>
+  <message>Spielerdatei gespeichert</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:06</date>
+  <millis>1579774686340</millis>
+  <sequence>1</sequence>
+  <logger>persistance.YoolooFileWriter</logger>
+  <level>FINE</level>
+  <class>persistance.YoolooFileWriter</class>
+  <method>loadUsers</method>
+  <thread>1</thread>
+  <message>Spielerdatei geladen</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:06</date>
+  <millis>1579774686382</millis>
+  <sequence>2</sequence>
+  <logger>YoolooServer</logger>
+  <level>WARNING</level>
+  <class>server.YoolooServer</class>
+  <method>printBanner</method>
+  <thread>13</thread>
+  <message>No banner was found!</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:06</date>
+  <millis>1579774686384</millis>
+  <sequence>3</sequence>
+  <logger>YoolooServer</logger>
+  <level>FINE</level>
+  <class>server.YoolooServer</class>
+  <method>startServer</method>
+  <thread>13</thread>
+  <message>Server gestartet - warte auf Spieler</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:06</date>
+  <millis>1579774686385</millis>
+  <sequence>4</sequence>
+  <logger>YoolooServer</logger>
+  <level>INFO</level>
+  <class>server.YoolooServer$1</class>
+  <method>run</method>
+  <thread>16</thread>
+  <message>Zu wenige Spieler für einen Bot-Spawn</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:06</date>
+  <millis>1579774686388</millis>
+  <sequence>5</sequence>
+  <logger>client.YoolooClient</logger>
+  <level>FINE</level>
+  <class>client.YoolooClient</class>
+  <method>verbindeZumServer</method>
+  <thread>15</thread>
+  <message>[Client] Serversocket eingerichtet: Socket[addr=localhost/127.0.0.1,port=44137,localport=56810]</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:06</date>
+  <millis>1579774686388</millis>
+  <sequence>6</sequence>
+  <logger>YoolooServer</logger>
+  <level>FINE</level>
+  <class>server.YoolooServer</class>
+  <method>startServer</method>
+  <thread>13</thread>
+  <message>Prüfe ob Spielername bereits verbunden</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:06</date>
+  <millis>1579774686389</millis>
+  <sequence>7</sequence>
+  <logger>client.YoolooClient</logger>
+  <level>FINE</level>
+  <class>client.YoolooClient</class>
+  <method>verbindeZumServer</method>
+  <thread>15</thread>
+  <message>Spielerprüfung erfolgt. Übermittle Spielernamen</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:06</date>
+  <millis>1579774686390</millis>
+  <sequence>8</sequence>
+  <logger>YoolooServer</logger>
+  <level>FINE</level>
+  <class>server.YoolooServer</class>
+  <method>startServer</method>
+  <thread>13</thread>
+  <message>Spieler noch nicht verbunden. Füge Spieler hinzu.</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:06</date>
+  <millis>1579774686394</millis>
+  <sequence>9</sequence>
+  <logger>YoolooServer</logger>
+  <level>FINE</level>
+  <class>server.YoolooServer</class>
+  <method>startServer</method>
+  <thread>13</thread>
+  <message>[YoolooServer] Anzahl verbundene Spieler: 1</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:09</date>
+  <millis>1579774689384</millis>
+  <sequence>10</sequence>
+  <logger>client.YoolooClient</logger>
+  <level>FINE</level>
+  <class>client.YoolooClient</class>
+  <method>verbindeZumServer</method>
+  <thread>14</thread>
+  <message>[Client] Serversocket eingerichtet: Socket[addr=localhost/127.0.0.1,port=44137,localport=56811]</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:09</date>
+  <millis>1579774689384</millis>
+  <sequence>11</sequence>
+  <logger>YoolooServer</logger>
+  <level>FINE</level>
+  <class>server.YoolooServer</class>
+  <method>startServer</method>
+  <thread>13</thread>
+  <message>Prüfe ob Spielername bereits verbunden</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:09</date>
+  <millis>1579774689387</millis>
+  <sequence>12</sequence>
+  <logger>YoolooServer</logger>
+  <level>INFO</level>
+  <class>server.YoolooServer$1</class>
+  <method>run</method>
+  <thread>16</thread>
+  <message>Zu wenige Spieler für einen Bot-Spawn</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:09</date>
+  <millis>1579774689390</millis>
+  <sequence>13</sequence>
+  <logger>client.YoolooClient</logger>
+  <level>FINE</level>
+  <class>client.YoolooClient</class>
+  <method>verbindeZumServer</method>
+  <thread>14</thread>
+  <message>Spielerprüfung erfolgt. Übermittle Spielernamen</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:09</date>
+  <millis>1579774689393</millis>
+  <sequence>14</sequence>
+  <logger>client.YoolooClient</logger>
+  <level>FINE</level>
+  <class>client.YoolooClient</class>
+  <method>verbindeZumServer</method>
+  <thread>14</thread>
+  <message>Server hat Verbindung verweigert. Schließe Client.</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:09</date>
+  <millis>1579774689393</millis>
+  <sequence>15</sequence>
+  <logger>YoolooServer</logger>
+  <level>WARNING</level>
+  <class>server.YoolooServer</class>
+  <method>startServer</method>
+  <thread>13</thread>
+  <message>Spieler bereits verbunden. Breche Verbindungsversuch ab.</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:09</date>
+  <millis>1579774689487</millis>
+  <sequence>16</sequence>
+  <logger>YoolooServer</logger>
+  <level>FINE</level>
+  <class>server.YoolooServer</class>
+  <method>shutDownServer</method>
+  <thread>1</thread>
+  <message>Server wird beendet</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:09</date>
+  <millis>1579774689489</millis>
+  <sequence>17</sequence>
+  <logger>YoolooServer</logger>
+  <level>SEVERE</level>
+  <class>server.YoolooServer</class>
+  <method>startServer</method>
+  <thread>13</thread>
+  <message>Client Verbindung gescheitert</message>
+</record>
+<record>
+  <date>2020-01-23T11:18:09</date>
+  <millis>1579774689493</millis>
+  <sequence>18</sequence>
+  <logger>YoolooServer</logger>
+  <level>FINE</level>
+  <class>server.YoolooServer</class>
+  <method>shutDownServer</method>
+  <thread>13</thread>
+  <message>Server wird beendet</message>
+</record>
+</log>

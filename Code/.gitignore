@@ -5,3 +5,5 @@
 /.idea/
 /target/
 /users.data
+
+*.log

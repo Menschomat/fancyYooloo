@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>README</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 id="fancyyooloo-user-manual">fancyYooloo User-Manual</h1>
+<h2 id="server-configuration">Server-Configuration</h2>
+<h3 id="server">Server</h3>
+<h4 id="defines-the-used-server-port">Defines the used server-port:</h4>
+<p><code>server.port=44137</code></p>
+<h3 id="game">Game</h3>
+<h4 id="defines-the-total-nuber-of-players-in-a-game">Defines the total nuber of Players in a Game:</h4>
+<p><code>game.size=3</code></p>
+<h4 id="defines-the-minimal-count-of-real-players-in-a-game">Defines the minimal count of real Players in a Game:</h4>
+<p><code>game.min.players=3</code></p>
+<h4 id="defines-the-time-the-server-schould-wait-for-more-players-before-some-bots-spawn-seconds">Defines the time the server schould wait for more Players, before some bots spawn (Seconds):</h4>
+<p><code>game.bot.wait=100</code></p>
+<h4 id="prevent-duplicated-players-deactivate-for-legacy-clients">Prevent duplicated players (deactivate for legacy-clients):</h4>
+<p><code>game.nameCheck=false</code></p>
+<ul>
+<li><code>true</code>: on</li>
+<li><code>false</code>: off</li>
+</ul>
+<h3 id="bot">Bot</h3>
+<h4 id="sets-gamemode-of-spawned-bots">Sets gamemode of spawned bots:</h4>
+<p><code>bot.mode=RANDOM</code></p>
+<ul>
+<li><code>RANDOM</code>: random-deck</li>
+</ul>
+<hr />
+<h2 id="client-configuration">Client-Configuration</h2>
+<h4 id="prevent-duplicated-players-deactivate-for-legacy-servers">Prevent duplicated players (deactivate for legacy-servers):</h4>
+<p><code>game.nameCheck=false</code></p>
+<ul>
+<li><code>true</code>: on</li>
+<li><code>false</code>: off</li>
+</ul>
+<h4 id="change-the-gamemode">Change the gamemode:</h4>
+<p><code>game.play.mode=X</code></p>
+<ul>
+<li><code>0</code>: random</li>
+<li><code>1</code>: 1 to 10</li>
+<li><code>2</code>: 10 to 1</li>
+</ul>
+</body>
+</html>
