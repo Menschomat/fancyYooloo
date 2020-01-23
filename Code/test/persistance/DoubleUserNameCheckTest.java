@@ -30,6 +30,7 @@ public class DoubleUserNameCheckTest {
         while (!result.isDone()) {
             Thread.sleep(300);
         }
+        server.shutDownServer(543210);
         service.shutdownNow();
         assertEquals(1, result.get());
     }
