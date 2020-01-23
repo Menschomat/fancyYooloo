@@ -109,6 +109,7 @@ public class YoolooServer {
                             client.close();
                             logger.warning("Spieler bereits verbunden. Breche Verbindungsversuch ab.");
                         } else {
+                            oos.writeObject(YoolooClient.ClientState.CLIENTSTATE_CONNECT);
                             playerNames.add(playerName);
                             logger.fine("Spieler noch nicht verbunden. Füge Spieler hinzu.");
                         }

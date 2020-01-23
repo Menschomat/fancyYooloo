@@ -44,7 +44,7 @@ namespace client {
     - spielVerlauf: YoolooStich[]
     - logger: Logger
     + YoolooClient()
-    + YoolooClient(serverHostname: String, serverPort: int)
+    + YoolooClient(serverHostname: String, serverPort: int, nameCheck: boolean)
     + startClient(): void
     - verbindeZumServer(): void
     - spieleStich(stichNummer: int): void
@@ -112,7 +112,6 @@ namespace common {
     - spielerliste: ArrayList<YoolooSpieler>
     + YoolooKartenspiel()
     + listeSpielstand(): void
-    + hasPlayer(playerName: String): boolean
     + spielerRegistrieren(name: String): void
     + spielerRegistrieren(neuerSpieler YoolooSpieler): YoolooSpieler
     + toString(): String
@@ -244,11 +243,14 @@ namespace persistence {
     - fileWriter: YoolooFileWriter
     - persistence: YoolooPersistance
     + YoolooUsers()
-    + setUserCardOrder(username: String, cardValuesInOrder: List<Integer>): void
+    + setUserCardOrder(meinSpieler: YoolooSpieler): void
     + getUserCardOrder(meinSpieler: YoolooSpieler): YoolooKarte[]
     - valuesAreValid()
   }
 }
+
+persistence.YoolooUsers "1" --* "1" persistence.YoolooPersistence
+persistence.YoolooUsers "1" --* "1" persistence.YoolooFileWriter
 
 namespace server {
   enum ServerState {
@@ -262,7 +264,7 @@ namespace server {
     ServerState_DISCONNECTED
   }
 
-  class YoolooServer {
+  class YoolooClientHandler {
     - logger: Logger
     - delay: int
     - myServer: YoolooServer
@@ -281,7 +283,6 @@ namespace server {
     - sendeKommando(serverMessageType: ServerMessageType, clientState: ClientState, serverMessageResult: ServerMessageResult): void
     - verbindeZumClient(): void
     - empfangeVomClient(): Object
-    - playerAlreadyInSession(playerName: String): boolean
     - registriereSpielerInSession(meinSpieler: YoolooSpieler): void
     - spieleKarte(stichNummer: int, empfangeneKarte: YoolooKarte): YoolooStich
     + setHandlerID(clientHandlerId): void
@@ -298,7 +299,7 @@ namespace server {
     GAMEMODE_PLAY_POKAL_LL
   }
 
-  class YoolooSession {
+  class YoolooServer {
     - port: int
     - spielerProRunde: int
     - minRealPlayers: int
@@ -311,7 +312,7 @@ namespace server {
     - serverAktiv: boolean
     - clientHandlerList: ArrayList<YoolooClientHandler>
     - spielerPool: ExecutorService
-    + YoolooServer(port: int, spielerProRunde: int, minRealPlayers: int, waitForPlayers: int, gameMode GameMode)
+    + YoolooServer(port: int, spielerProRunde: int, minRealPlayers: int, waitForPlayers: int, gameMode GameMode, nameCheck: boolean)
     + startServer(): void
     + shutDownServer(code: int): void
     + getUsers(): YoolooUsers
@@ -325,7 +326,7 @@ namespace server {
     - clientSpawnTimeExceeded(startedSearch: long): boolean
   }
 
-  class YoolooClientHandler {
+  class YoolooSession {
     - anzahlSpielerInRunde: int
     - gameMode: GameMode
     - spielplan: YoolooKarte[][]
