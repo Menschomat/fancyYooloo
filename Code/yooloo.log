@@ -211,3 +211,29 @@
   <message>Server wird beendet</message>
 </record>
 </log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2020-01-23T12:05:17</date>
+  <millis>1579777517241</millis>
+  <sequence>0</sequence>
+  <logger>persistance.YoolooFileWriter</logger>
+  <level>FINE</level>
+  <class>persistance.YoolooFileWriter</class>
+  <method>loadUsers</method>
+  <thread>1</thread>
+  <message>Spielerdatei geladen</message>
+</record>
+<record>
+  <date>2020-01-23T12:05:17</date>
+  <millis>1579777517257</millis>
+  <sequence>1</sequence>
+  <logger>persistance.YoolooFileWriter</logger>
+  <level>FINE</level>
+  <class>persistance.YoolooFileWriter</class>
+  <method>loadUsers</method>
+  <thread>1</thread>
+  <message>Spielerdatei geladen</message>
+</record>
+</log>
