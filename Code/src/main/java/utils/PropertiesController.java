@@ -28,7 +28,7 @@ public abstract class PropertiesController {
     }
 
     public static Properties getProperties(String name) {
-        String path = "./" + name + ".properties";
+        String path = name + ".properties";
         try {
             InputStream fis = new FileInputStream(path);
             properties.load(fis);

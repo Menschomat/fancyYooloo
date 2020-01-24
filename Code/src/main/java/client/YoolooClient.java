@@ -178,9 +178,9 @@ public class YoolooClient {
             System.out.print(
                     "[id-" + meinSpieler.getClientHandlerId() + "]ClientStatus: " + clientState + "] : Gewonnen - ");
             meinSpieler.erhaeltPunkte(iStich.getStichNummer() + 1);
-            //updateStats(true, stichNummer, meinSpieler.getAktuelleSortierung()[stichNummer].getWert());
+           // updateStats(true, stichNummer, meinSpieler.getAktuelleSortierung()[stichNummer].getWert());TODO wieder einkommentieren wenn es benutzt werden soll
         } else {
-            //updateStats(false, stichNummer, meinSpieler.getAktuelleSortierung()[stichNummer].getWert());
+           // updateStats(false, stichNummer, meinSpieler.getAktuelleSortierung()[stichNummer].getWert());TODO wieder einkommentieren wenn es benutzt werden soll
         }
 
     }
@@ -277,7 +277,7 @@ public class YoolooClient {
     public YoolooKarte[] fancySortierung(String property) {
         Properties props = PropertiesController.getProperties(property);
         YoolooKarte[] fancySortierung = new YoolooKarte[this.meinSpieler.getAktuelleSortierung().length];
-        String spielweise = props.get("spielweise.nummer") != null ? (String) props.get("spielweise.nummer") : "0";
+        String spielweise = props.get("game.play.mode") != null ? (String) props.get("game.play.mode") : "0";
         switch (spielweise) {
             case "0":
                 fancySortierung = sortierungFestlegen();
